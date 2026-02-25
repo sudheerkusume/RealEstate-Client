@@ -17,8 +17,9 @@ import { useNavigate } from 'react-router-dom';
 import api from '../config/api';
 import DefaultAdmin from '../Accets/Admin.png';
 import ViewApplication from '../Admin/ViewApplication';
-import { FiSearch, FiBell, FiMail as FiMailIcon } from 'react-icons/fi';
+import { FiSearch, FiBell, FiMail as FiMailIcon, FiEdit2 } from 'react-icons/fi';
 import Projects from '../Admin/Projects';
+import CompanyProfile from './CompanyProfile';
 
 const CompanyDashboard = () => {
     const [view, setView] = useState("");
@@ -67,6 +68,8 @@ const CompanyDashboard = () => {
             return <ViewApplication />;
         } else if (view === "projects") {
             return <Projects />;
+        } else if (view === "Profile") {
+            return <CompanyProfile user={user} onUpdate={(updated) => setUser(prev => ({ ...prev, ...updated }))} />;
         } else {
             return <h2>invalid view</h2>;
         }
@@ -160,17 +163,26 @@ const CompanyDashboard = () => {
                                 <FiBell className="text-muted" />
                                 <span className="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle" style={{ marginTop: '5px', marginLeft: '-5px' }}></span>
                             </button>
-                            <div className="d-flex align-items-center gap-2 ms-2 p-1 pe-3 rounded-pill bg-white border shadow-sm cursor-pointer">
-                                <img
-                                    src={
-                                        user?.profileImage
-                                            ? `${api.defaults.baseURL}${user.profileImage}`
-                                            : (user?.logo || DefaultAdmin)
-                                    }
-                                    alt="Company"
-                                    className="rounded-circle object-fit-cover shadow-sm"
-                                    style={{ width: 34, height: 34 }}
-                                />
+                            <div
+                                className="d-flex align-items-center gap-2 ms-2 p-1 pe-3 rounded-pill bg-white border shadow-sm cursor-pointer profile-trigger"
+                                onClick={() => setView("Profile")}
+                                title="Edit Company Profile"
+                            >
+                                <div className="position-relative">
+                                    <img
+                                        src={
+                                            user?.profileImage
+                                                ? `${api.defaults.baseURL}${user.profileImage}`
+                                                : (user?.logo || DefaultAdmin)
+                                        }
+                                        alt="Company"
+                                        className="rounded-circle object-fit-cover shadow-sm"
+                                        style={{ width: 34, height: 34 }}
+                                    />
+                                    <span className="position-absolute bottom-0 end-0 bg-primary text-white rounded-circle d-flex align-items-center justify-content-center border border-white" style={{ width: 12, height: 12, fontSize: '8px' }}>
+                                        <FiEdit2 />
+                                    </span>
+                                </div>
                                 <span className="fw-bold d-none d-sm-inline" style={{ fontSize: '13px', color: '#1e293b' }}>{user?.name?.split(' ')[0]}</span>
                                 <IoIosArrowDown className="text-muted" style={{ fontSize: '12px' }} />
                             </div>

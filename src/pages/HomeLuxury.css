@@ -1,0 +1,508 @@
+/* HomeLuxury.css */
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;900&display=swap');
+
+:root {
+    --primary-charcoal: #2d3748;
+    --accent-gold: #c6a355;
+    --accent-gold-light: #e2b04c;
+    --text-muted: #64748b;
+    --bg-light: #f8fafc;
+    --glass-bg: rgba(255, 255, 255, 0.85);
+    --glass-border: rgba(256, 256, 256, 0.4);
+    --card-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+    --card-hover-shadow: 0 25px 60px rgba(45, 55, 72, 0.1);
+    --font-main: 'Outfit', sans-serif;
+    --font-heading: 'Playfair Display', serif;
+}
+
+/* Section Header Mastery */
+.home-section-header {
+    margin-bottom: 50px;
+    text-align: center;
+}
+
+.home-section-title {
+    font-family: var(--font-heading);
+    font-weight: 900;
+    font-size: 40px;
+    color: var(--primary-charcoal);
+    letter-spacing: -1px;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, #1a202c 0%, #4a5568 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.home-section-subtitle {
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--accent-gold);
+    margin-bottom: 8px;
+    display: block;
+}
+
+/* Category Cards (Jobs.jsx) */
+.luxury-category-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 24px;
+    padding: 20px 0;
+}
+
+.luxury-category-card {
+    background: #fff;
+    border: 1px solid #f1f5f9;
+    border-radius: 20px;
+    padding: 30px 20px;
+    text-align: center;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: var(--card-shadow);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+}
+
+.luxury-category-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--card-hover-shadow);
+    border-color: rgba(198, 163, 85, 0.2);
+}
+
+.category-icon-wrapper-home {
+    width: 64px;
+    height: 64px;
+    background: rgba(198, 163, 85, 0.08);
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    transition: all 0.4s ease;
+}
+
+.category-icon-home {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    transition: transform 0.4s ease;
+}
+
+.luxury-category-card:hover .category-icon-wrapper-home {
+    background: var(--primary-charcoal);
+    transform: rotate(-5deg);
+}
+
+.luxury-category-card:hover .category-icon-home {
+    filter: brightness(0) invert(1);
+    transform: scale(1.1);
+}
+
+.luxury-category-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--primary-charcoal);
+    margin-bottom: 8px;
+}
+
+.luxury-category-count {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.category-btn-home {
+    margin-top: auto;
+    padding-top: 15px;
+    color: var(--accent-gold);
+    font-weight: 700;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    transition: gap 0.3s ease;
+}
+
+.luxury-category-card:hover .category-btn-home {
+    gap: 10px;
+}
+
+/* City Grid (City.jsx) */
+.luxury-city-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 25px;
+}
+
+.luxury-city-card {
+    position: relative;
+    height: 260px;
+    border-radius: 24px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.luxury-city-card:hover {
+    transform: translateY(-5px) scale(1.02);
+}
+
+.luxury-city-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(15, 23, 42, 0.9) 0%, rgba(15, 23, 42, 0) 60%);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 25px;
+    transition: background 0.4s ease;
+}
+
+.luxury-city-card:hover .luxury-city-overlay {
+    background: linear-gradient(to top, rgba(198, 163, 85, 0.8) 0%, rgba(15, 23, 42, 0) 70%);
+}
+
+.luxury-city-name {
+    color: #fff;
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 4px;
+}
+
+.luxury-city-count {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Full Width Immersive Hero Carousel (Framer Motion) */
+.hero-full-width {
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    height: 300px;
+    border-radius: 10px;
+    background-color: #0b5e4b;
+    margin-top: 0;
+}
+
+.carousel-fm-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.carousel-fm-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.Carousel__infoImgWrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+}
+
+.Carousel__pfidProjWithZoom {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    z-index: 5;
+}
+
+.carousel-custom-indicators {
+    position: absolute;
+    bottom: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 15px;
+    z-index: 20;
+}
+
+.indicator-dot-outer {
+    width: 40px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.25);
+    cursor: pointer;
+    border-radius: 20px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.indicator-dot-outer.active {
+    width: 70px;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.indicator-progress-inner {
+    height: 100%;
+    background: #fff;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.carousel-control-luxury {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-radius: 50%;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 30;
+    opacity: 0;
+}
+
+.carousel-fm-container:hover .carousel-control-luxury {
+    opacity: 1;
+}
+
+.carousel-control-luxury:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.carousel-control-luxury:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
+.carousel-control-luxury.prev {
+    left: 30px;
+}
+
+.carousel-control-luxury.next {
+    right: 30px;
+}
+
+/* MASTERPIECE FLOATING BOX (99acres Overlap Style) */
+/* Category Title Restoration */
+.masterpiece-box {
+    background: #fff;
+    border-radius: 16px;
+    padding: 30px 40px;
+    box-shadow: 0 15px 50px -10px rgba(0, 0, 0, 0.15), 0 10px 20px -5px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.masterpiece-title {
+    font-size: 32px;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 0;
+    text-align: center;
+}
+
+.masterpiece-title .highlight-bold {
+    font-weight: 700;
+    color: #111827;
+}
+
+@media (max-width: 768px) {
+    .masterpiece-box {
+        padding: 20px;
+    }
+
+    .masterpiece-tabs {
+        gap: 15px;
+        overflow-x: auto;
+        justify-content: flex-start;
+        padding-bottom: 10px;
+    }
+
+    .masterpiece-search-bar {
+        flex-direction: column;
+        border: none;
+        background: transparent;
+        padding: 0;
+    }
+
+    .search-input-group {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        padding-left: 10px;
+    }
+
+    .masterpiece-btn {
+        width: 100%;
+    }
+}
+
+/* Transition Title Styles (Matching Image Exactly) */
+.jobs-transition-header {
+    text-align: center;
+    padding: 60px 20px 40px 20px;
+    background-color: #fff;
+}
+
+.curated-tagline {
+    font-family: var(--font-main);
+    color: var(--accent-gold);
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.curated-tagline .star-icon {
+    font-size: 18px;
+    margin-top: -2px;
+}
+
+.serif-transition-title {
+    font-family: var(--font-heading);
+    font-weight: 400;
+    font-size: 44px;
+    color: #031b4e;
+    /* Deep luxury navy */
+    margin: 0;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+}
+
+.dream-centerpiece {
+    font-family: var(--font-heading);
+    font-style: italic;
+    font-weight: 400;
+    color: var(--accent-gold);
+    margin: 0 5px;
+    display: inline-block;
+    position: relative;
+}
+
+/* Dream Job Section Redesign */
+.dream-job-section {
+    padding: 60px 0 100px 0;
+    background-color: #fff;
+    /* Match background for seamless flow */
+}
+
+.dream-job-container {
+    width: 90%;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.dream-job-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    /* Centering the cards in a balanced way */
+    gap: 20px;
+    width: 100%;
+}
+
+@media (min-width: 768px) {
+    .dream-job-grid {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 25px;
+    }
+
+    .dream-job-card {
+        flex: 1 1 calc(25% - 25px);
+        /* Forces 4 cards per row */
+        max-width: calc(25% - 20px);
+    }
+}
+
+.dream-job-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px 20px;
+    text-align: left;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 15px;
+    border: 1px solid #f1f5f9;
+}
+
+.dream-job-card:hover {
+    background-color: #1e3a8a !important;
+    /* Restore contrast background */
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(30, 58, 138, 0.2);
+    border-color: #1e3a8a;
+}
+
+.dream-job-icon {
+    height: 42px;
+    width: 42px;
+    object-fit: contain;
+    transition: all 0.3s ease;
+}
+
+.dream-job-card h3 {
+    font-size: 16px;
+    font-weight: 500;
+    /* Lightened from 600 */
+    color: #111827;
+    margin-bottom: 4px;
+    transition: all 0.3s ease;
+    letter-spacing: -0.1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+.dream-job-card p {
+    font-size: 13px;
+    color: #64748b;
+    margin-bottom: 0;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+.dream-job-card:hover h3,
+.dream-job-card:hover p {
+    color: #fff !important;
+    /* White text on indigo background */
+}
+
+.dream-job-card:hover .dream-job-icon {
+    filter: brightness(0) invert(1);
+    transform: scale(1.1);
+}

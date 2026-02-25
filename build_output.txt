@@ -7,9 +7,9 @@ Compiled successfully.
 
 File sizes after gzip:
 
-  358.03 kB (-7 B)  build\static\js\main.cdc65395.js
-  57.55 kB          build\static\css\main.c98054c0.css
-  1.76 kB           build\static\js\453.926f0775.chunk.js
+  358.35 kB  build\static\js\main.bae215bf.js
+  58.37 kB   build\static\css\main.5dc2897e.css
+  1.76 kB    build\static\js\453.926f0775.chunk.js
 
 The project was built assuming it is hosted at /.
 You can control this with the homepage field in your package.json.

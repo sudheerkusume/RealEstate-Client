@@ -1,292 +1,219 @@
 import api from "../config/api";
 import { formatSalary } from "../utils/formatSalary";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { IoIosArrowForward, IoIosArrowDown, } from "react-icons/io";
-import { IoFilter, IoClose } from "react-icons/io5";
-import { BsGeoAlt, BsClock, BsBriefcase, BsLayoutTextWindowReverse, BsSearch } from "react-icons/bs";
-import { MdVerified } from "react-icons/md";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  BsGeoAlt, BsClock, BsBriefcase, BsSearch,
+  BsPeople, BsBuilding, BsBuildingCheck, BsHeadset,
+  BsMegaphone, BsCode, BsCpu, BsCalculator,
+  BsPentagon, BsJournalText, BsCurrencyRupee, BsArrowRight
+} from "react-icons/bs";
+import "./JobsPageLuxury.css";
+
+const staticCategories = [
+  { id: "Tele Caller", title: "Tele Caller", icon: <BsHeadset /> },
+  { id: "Channel Partners", title: "Channel Partners", icon: <BsPeople /> },
+  { id: "Real Estate Sales", title: "Real Estate Sales", icon: <BsBuildingCheck /> },
+  { id: "CRM Executive", title: "CRM Executive", icon: <BsCpu /> },
+  { id: "Digital Marketing", title: "Digital Marketing", icon: <BsMegaphone /> },
+  { id: "HR & Operations", title: "HR & Operations", icon: <BsBuilding /> },
+  { id: "Accounts & Auditing", title: "Accounts & Auditing", icon: <BsCalculator /> },
+  { id: "Legal", title: "Legal", icon: <BsJournalText /> },
+  { id: "Architects", title: "Architects", icon: <BsPentagon /> },
+  { id: "Web Development", title: "Web Development", icon: <BsCode /> },
+];
 
 const JobsPage = () => {
   const [jobs, setJobs] = useState([]);
-  const [openSections, setOpenSections] = useState({});
-  const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-
-  const [filters, setFilters] = useState({
-    Location: [],
-    Company: [],
-    JobType: [],
-    Experience: [],
-  });
-
-  const [selectedFilters, setSelectedFilters] = useState({
-    Location: [],
-    Company: [],
-    JobType: [],
-    Experience: [],
-  });
+  const [companies, setCompanies] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("Tele Caller");
+  const [hoveredCategory, setHoveredCategory] = useState(null);
 
   useEffect(() => {
-    api
-      .get("/jobCategories")
-      .then((res) => {
-        setJobs(res.data);
-
-        const newFilters = {
-          Location: [...new Set(res.data.map((j) => j.location))],
-          Company: [...new Set(res.data.map((j) => j.company))],
-          JobType: [...new Set(res.data.map((j) => j.type))],
-          Experience: [...new Set(res.data.map((j) => j.experience))],
-        };
-
-        setFilters(newFilters);
-
-        const defaultOpen = {};
-        Object.keys(newFilters).forEach((key) => (defaultOpen[key] = true));
-        setOpenSections(defaultOpen);
-      })
-      .catch((err) => console.log(err));
+    setLoading(true);
+    const fetchData = async () => {
+      try {
+        const [jobsRes, companiesRes] = await Promise.all([
+          api.get("/jobCategories"),
+          api.get("/companies")
+        ]);
+        setJobs(jobsRes.data || []);
+        setCompanies(companiesRes.data || []);
+      } catch (err) {
+        console.error("Error fetching data:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
   }, []);
 
-  const toggleSection = (key) => {
-    setOpenSections((prev) => ({ ...prev, [key]: !prev[key] }));
-  };
-
-  const handleFilterChange = (type, value) => {
-    setSelectedFilters((prev) => {
-      const updated = prev[type].includes(value)
-        ? prev[type].filter((v) => v !== value)
-        : [...prev[type], value];
-
-      return { ...prev, [type]: updated };
+  const filteredJobs = useMemo(() => {
+    return jobs.filter(job => {
+      const matchesCategory = !selectedCategory || job.category === selectedCategory;
+      const title = job.title || "";
+      const company = job.company || "";
+      const matchesSearch = !searchTerm ||
+        title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        company.toLowerCase().includes(searchTerm.toLowerCase());
+      return matchesCategory && matchesSearch;
     });
-  };
+  }, [jobs, selectedCategory, searchTerm]);
 
-  const applyFilters = (job) => {
-    const title = job.title || "";
-    const company = job.company || "";
-    const location = job.location || "";
-
-    const matchesSearch =
-      searchTerm === "" ||
-      title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      company.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      location.toLowerCase().includes(searchTerm.toLowerCase());
-
+  if (loading) {
     return (
-      matchesSearch &&
-      (selectedFilters.Location.length === 0 ||
-        selectedFilters.Location.includes(job.location)) &&
-      (selectedFilters.Company.length === 0 ||
-        selectedFilters.Company.includes(job.company)) &&
-      (selectedFilters.JobType.length === 0 ||
-        selectedFilters.JobType.includes(job.type)) &&
-      (selectedFilters.Experience.length === 0 ||
-        selectedFilters.Experience.includes(job.experience))
+      <div className="luxury-loading-container">
+        <div className="premium-loader-static" style={{ marginBottom: '20px' }}>
+          <BsBriefcase size={40} style={{ color: '#c6a355', opacity: 0.5 }} />
+        </div>
+        <h4 style={{ fontWeight: 600, color: '#2d3748', letterSpacing: '0.5px' }}>
+          Curating Elite Opportunities...
+        </h4>
+      </div>
     );
-  };
-
-  const filteredJobs = jobs.filter(applyFilters);
+  }
 
   return (
-    <div className="listing-hub-container">
-      <div className="container">
-        {/* ENHANCED SEARCH HERO SECTION */}
-        <div className="listing-hero-v2" data-aos="fade-down">
-          <div className="row align-items-center">
-            <div className="col-lg-7">
-              <h1 className="fw-light mb-1">Explore <strong>Elite Roles</strong></h1>
-              <p className="text-muted small mb-4">India's most prestigious developer network is hiring now.</p>
-
-              <div className="search-bar-rounded mb-3">
-                <BsSearch className="text-muted" />
-                <input
-                  type="text"
-                  placeholder="Search job titles, companies, or locations..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-
-              <div className="d-flex flex-wrap gap-2">
-                <div className="listing-stat-pill">
-                  <strong>{jobs.length}</strong> Total Roles
-                </div>
-                <div className="listing-stat-pill">
-                  <div style={{ width: 6, height: 6, background: '#10b981', borderRadius: '50%' }}></div>
-                  <strong>Active</strong> Hiring
-                </div>
-              </div>
-            </div>
-
-            <div className="col-lg-5 mt-4 mt-lg-0">
-              <div className="ps-0 ps-lg-4">
-                <p className="small fw-bold text-uppercase letter-spacing-1 text-muted mb-3">Trusted Partners</p>
-                <div className="trusted-strip-v2">
-                  <span className="company-logo-text">ALPHA</span>
-                  <span className="company-logo-text">LUXE</span>
-                  <span className="company-logo-text">HORIZON</span>
-                  <span className="company-logo-text">PRESTIGE</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="row g-4">
-          {/* Sidebar Filters */}
-          <div className={`col-lg-3 ${mobileFilterOpen ? 'active' : ''} filter-glass-sidebar`}>
-            <div className="d-flex justify-content-between align-items-center d-lg-none mb-4">
-              <h5 className="m-0">Filters</h5>
-              <button className="btn btn-light rounded-circle p-2" onClick={() => setMobileFilterOpen(false)}>
-                <IoClose size={24} />
-              </button>
-            </div>
-
-            {Object.entries(filters).map(([filterType, values]) => (
-              <div key={filterType} className="mb-4 border-bottom pb-4 last-child-no-border">
-                <div
-                  className="filter-section-title cursor-poPoppins"
-                  onClick={() => toggleSection(filterType)}
-                >
-                  {filterType.replace(/([A-Z])/g, " $1")}
-                  {openSections[filterType] ? <IoIosArrowDown /> : <IoIosArrowForward />}
+    <div className="luxury-jobs-wrapper">
+      {/* Horizontal Categories Filter */}
+      <div className="category-filter-section">
+        <div className="container">
+          <div className="category-container" onMouseLeave={() => setHoveredCategory(null)}>
+            {staticCategories.map((cat) => (
+              <div
+                key={cat.id}
+                className={`category-item ${selectedCategory === cat.id ? 'is-active' : ''}`}
+                onClick={() => setSelectedCategory(cat.id)}
+                onMouseEnter={() => setHoveredCategory(cat.id)}
+                style={{ position: 'relative' }}
+              >
+                <div className="category-content-wrapper">
+                  <div className="category-icon-box">{cat.icon}</div>
+                  <div className="category-title">{cat.title}</div>
                 </div>
 
-                <div
-                  style={{
-                    maxHeight: openSections[filterType] ? "400px" : "0",
-                    overflow: "hidden",
-                    transition: "0.4s ease",
-                  }}
-                >
-                  <div className="mt-2">
-                    {values.map((value, index) => (
-                      <label key={`${filterType}-${value}`} className="lux-checkbox-item">
-                        <input
-                          type="checkbox"
-                          checked={selectedFilters[filterType]?.includes(value)}
-                          onChange={() => handleFilterChange(filterType, value)}
-                        />
-                        <span>{value}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
+                {/* Sliding Active Indicator */}
+                {selectedCategory === cat.id && (
+                  <motion.div
+                    layoutId="activeTabHighlight"
+                    className="category-active-indicator"
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                  />
+                )}
+
+                {/* Sliding Hover Indicator */}
+                {hoveredCategory === cat.id && selectedCategory !== cat.id && (
+                  <motion.div
+                    layoutId="hoverTabHighlight"
+                    className="category-hover-indicator"
+                    transition={{ type: "spring", bounce: 0, duration: 0.4 }}
+                  />
+                )}
               </div>
             ))}
-
-            <button className="btn btn-outline-danger w-100 rounded-pill mt-3 d-lg-none" onClick={() => setMobileFilterOpen(false)}>
-              Apply Filters
-            </button>
           </div>
+        </div>
+      </div>
 
-          {/* Job Listings Area */}
-          <div className="col-lg-9">
-            <div className="d-flex justify-content-between align-items-center mb-4">
-              <div className="small text-muted">Found <strong>{filteredJobs.length}</strong> matches for your search</div>
-              <div className="d-lg-none">
-                <button className="btn btn-dark btn-sm rounded-pill px-4" onClick={() => setMobileFilterOpen(true)}>
-                  <IoFilter className="me-2" /> Filters
-                </button>
-              </div>
-            </div>
+      {/* Main Content */}
+      <div className="container" style={{ paddingTop: '60px' }}>
+        <div className="section-header-elite">
+          <h2 className="elite-title">
+            {selectedCategory || "All Opportunities"}
+          </h2>
+          <p className="elite-subtitle">
+            Discover {filteredJobs.length} exclusive career paths in {selectedCategory || "real estate"}
+          </p>
+        </div>
 
-            <div className="row g-4">
-              {filteredJobs.map((job, index) => (
-                <div className="col-md-6" key={job._id || index} data-aos="fade-up" data-aos-delay={index * 50}>
-                  <Link to={`/jobs/${job._id}`} className="text-decoration-none">
-                    <div className="lux-listing-card">
-                      <div className="lux-card-top">
-                        <div className="company-logo-mini">
-                          {job.logo ? (
-                            <img src={job.logo} alt={job.company || "Company"} />
-                          ) : (
-                            <span>{job.company?.charAt(0) || "C"}</span>
-                          )}
-                        </div>
-                        {index % 4 === 0 ? (
-                          <span className="lux-badge-urgent">Urgent</span>
-                        ) : (
-                          <span className="lux-badge-new">Hiring Now</span>
-                        )}
-                      </div>
+        <div className="jobs-list-container">
+          <AnimatePresence mode="popLayout">
+            {filteredJobs.length === 0 ? (
+              <motion.div
+                key="empty"
+                className="elite-empty-state"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+              >
+                <div className="empty-icon-box">
+                  <BsBriefcase />
+                </div>
+                <h3 className="fw-bold" style={{ color: '#2d3748' }}>Patience is a Virtue</h3>
+                <p className="text-muted">
+                  We are currently hand-picking the most prestigious roles in this category.
+                  Check back soon for new arrivals.
+                </p>
+              </motion.div>
+            ) : (
+              filteredJobs.map((job, index) => (
+                <motion.div
+                  className="luxury-job-card"
+                  key={job._id || job.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  layout
+                >
+                  <div className="job-logo-container">
+                    <div className="logo-white-box">
+                      <img
+                        src={(() => {
+                          const jobCompany = companies.find(c => c._id === job.companyId || c.name === job.company);
+                          const logoPath = jobCompany?.logo || job.companyId?.logo;
+                          if (!logoPath) return "https://res.cloudinary.com/dlxs9zrru/image/upload/v1765435478/users/umlpxh7bax0uish0psin.jpg";
+                          return logoPath.startsWith("http")
+                            ? logoPath
+                            : `${api.defaults.baseURL.replace("/api", "")}/${logoPath}`;
+                        })()}
+                        alt={job.title}
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = "https://res.cloudinary.com/dlxs9zrru/image/upload/v1765435478/users/umlpxh7bax0uish0psin.jpg";
+                        }}
+                      />
+                    </div>
+                  </div>
 
-                      <h3 className="lux-job-title">{job.title}</h3>
-
-                      <div className="lux-company-name mb-3">
-                        <MdVerified className="text-primary opacity-75" />
-                        <span className="fw-bold">{job.company}</span>
-                      </div>
-
-                      <div className="lux-meta-grid mb-4">
-                        <div className="lux-meta-item">
-                          <BsGeoAlt size={16} />
-                          {job.location}
+                  <div className="job-main-info">
+                    <div className="job-details-group">
+                      <h3 className="job-title-elite">
+                        {job.title} - {job.company}
+                      </h3>
+                      <div className="job-meta-row">
+                        <div className="meta-item">
+                          <span className="meta-icon"><BsClock /></span>
+                          {job.type || "full-time"}
                         </div>
-                        <div className="lux-meta-item">
-                          <BsClock size={16} />
-                          {job.type}
+                        <div className="meta-item">
+                          <span className="meta-icon"><BsGeoAlt /></span>
+                          {job.location || "Hyderabad"}
                         </div>
-                        <div className="lux-meta-item">
-                          <BsBriefcase size={16} />
-                          {job.experience}
+                        <div className="meta-item">
+                          <span className="meta-icon"><BsCurrencyRupee /></span>
+                          {formatSalary(job.salary) || "₹ 20,000 - ₹ 40,000/month"}
                         </div>
-                        <div className="lux-meta-item">
-                          <BsLayoutTextWindowReverse size={16} />
-                          Ref: #{2024 + index}
-                        </div>
-                      </div>
-
-                      {/* Preferred Areas Tags */}
-                      {job.preferredAreas?.length > 0 && (
-                        <div className="d-flex flex-wrap gap-1 mb-3">
-                          {job.preferredAreas.slice(0, 3).map((area, i) => (
-                            <span key={i} className="badge rounded-pill"
-                              style={{ background: '#e0f2fe', color: '#0369a1', fontSize: '10px', fontWeight: 600, padding: '4px 10px' }}>
-                              📍 {area}
-                            </span>
-                          ))}
-                          {job.preferredAreas.length > 3 && (
-                            <span className="badge rounded-pill"
-                              style={{ background: '#f1f5f9', color: '#64748b', fontSize: '10px', fontWeight: 600, padding: '4px 10px' }}>
-                              +{job.preferredAreas.length - 3} more
-                            </span>
-                          )}
-                        </div>
-                      )}
-
-                      <div className="lux-card-footer border-top pt-3 mt-auto">
-                        <div className="lux-salary d-flex flex-column">
-                          <span className="small text-muted fw-normal">Package</span>
-                          <span>{formatSalary(job.salary)}</span>
-                        </div>
-                        <button className="btn-apply-lux">View Job Details</button>
                       </div>
                     </div>
-                  </Link>
-                </div>
-              ))}
 
-              {filteredJobs.length === 0 && (
-                <div className="col-12 text-center py-5 bg-white rounded-5 shadow-sm border">
-                  <BsSearch size={50} className="text-muted opacity-25 mb-4" />
-                  <h3 className="fw-light">No exact matches found</h3>
-                  <p className="text-muted mx-auto mb-4" style={{ maxWidth: '400px' }}>We couldn't find any roles matching your current filters. Try broadening your search.</p>
-                  <button
-                    className="btn btn-dark rounded-pill px-5 py-2 fw-bold"
-                    onClick={() => {
-                      setSearchTerm("");
-                      setSelectedFilters({ Location: [], Company: [], JobType: [], Experience: [] })
-                    }}
-                  >
-                    Clear All Filters
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
+                    <div className="job-action-area">
+                      <div className="vertical-divider"></div>
+                      <Link
+                        to={`/jobs/${job._id || job.id}`}
+                        className="view-details-btn-luxury"
+                      >
+                        View Details
+                      </Link>
+                    </div>
+                  </div>
+                </motion.div>
+              ))
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </div>
@@ -294,3 +221,5 @@ const JobsPage = () => {
 };
 
 export default JobsPage;
+
+

@@ -1,98 +1,110 @@
 import React from 'react';
-import { BsCheckCircle, BsPeople, BsLightbulb, BsShieldCheck, BsGlobe } from 'react-icons/bs';
+import { BsCheckCircle, BsPeople, BsLightbulb, BsShieldCheck, BsGlobe, BsArrowRight } from 'react-icons/bs';
 import { FaHandshake } from 'react-icons/fa';
+import aboutVideo from '../Accets/about.mp4';
 
 const About = () => {
   return (
     <div className="about-page">
-      {/* 1. Hero Section */}
+
+      {/* 1. Hero Section with Video */}
       <section className="about-hero">
+        <video
+          className="about-hero-video"
+          autoPlay
+          muted
+          loop
+          playsInline
+        >
+          <source src={aboutVideo} type="video/mp4" />
+        </video>
         <div className="about-hero-overlay"></div>
-        <div className="container position-relative z-2 text-center text-white">
-          <h5 className="text-uppercase letter-spacing-2 mb-3 text-warning">Welcome to Real Estate Jobs</h5>
-          <h1 className="display-3 fw-bold mb-4">Your Gateway to a Thriving <br /> Real Estate Career</h1>
-          <p className="lead opacity-75 mx-auto" style={{ maxWidth: '700px' }}>
-            We connect ambitious professionals with top-tier real estate companies, bridging the gap between talent and opportunity.
+        <div className="about-hero-content">
+          <span className="about-hero-badge">ABOUT US</span>
+          <h1 className="about-hero-title">
+            India's #1 Real Estate<br />Job Portal
+          </h1>
+          <p className="about-hero-subtitle">
+            Connecting ambitious professionals with top-tier real estate
+            companies across India.
           </p>
         </div>
       </section>
 
       {/* 2. Who We Are */}
-      <section className="section-padding bg-white">
-        <div className="container">
-          <div className="row justify-content-center text-center">
-            <div className="col-lg-10">
-              <h2 className="section-title mb-4">Who We <span className="highlight-red">Are</span></h2>
-              <p className="text-muted fs-5 lh-lg mb-5">
-                <strong>RealEstateJobs</strong> is a specialized recruitment and career platform dedicated exclusively to the real estate industry.
-                We connect skilled professionals with leading real estate developers, brokerage firms, property consultancies,
-                construction companies, and proptech startups across India.
-
-                Our mission is to bridge the gap between talent and opportunity in the rapidly growing real estate ecosystem.
-                From fresh graduates to experienced professionals, we help candidates discover roles that align with their skills,
-                career goals, and industry expertise.
+      <section className="about-section about-who">
+        <div className="about-container">
+          <div className="about-two-col">
+            <div className="about-col-text" data-aos="fade-right">
+              <span className="about-tag">WHO WE ARE</span>
+              <h2 className="about-heading">
+                About <span className="about-highlight">RE JOBS</span>
+              </h2>
+              <p className="about-text">
+                <strong>RealEstateJobs</strong> is India's first and only
+                exclusive job portal designed for the real estate industry.
+                We connect skilled professionals with leading developers,
+                brokerage firms, property consultancies, construction companies,
+                and proptech startups across India.
               </p>
-            </div>
-          </div>
-
-          <div className="row align-items-center mt-4">
-            <div className="col-lg-6 mb-4 mb-lg-0" data-aos="fade-right">
-              <img
-                src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=2070"
-                alt="Office Building"
-                className="img-fluid rounded-4 shadow-lg about-img-hover"
-              />
-            </div>
-            <div className="col-lg-6 ps-lg-5" data-aos="fade-left">
-              <h3 className="mb-4 fw-bold">About <span className="text-danger">RE JOBS</span></h3>
-              <p className="text-muted mb-4">
-                Welcome to RealEstateJobs.com – India's first and only exclusive job portal exclusively designed for the real estate industry. Whether you are a job seeker looking to build a career or an employer searching for top talent, we are here to connect you with the right opportunities.
+              <p className="about-text">
+                Our mission is to bridge the gap between talent and opportunity
+                in the rapidly growing real estate ecosystem. From fresh graduates
+                to experienced professionals, we help candidates discover roles
+                that align with their skills and career goals.
               </p>
-              <div className="d-flex gap-3">
-                <div className="d-flex align-items-center gap-2">
-                  <BsCheckCircle className="text-danger fs-4" />
-                  <span className="fw-semibold">Exclusive Portal</span>
+              <div className="about-badges-row">
+                <div className="about-badge-item">
+                  <BsCheckCircle />
+                  <span>Exclusive Portal</span>
                 </div>
-                <div className="d-flex align-items-center gap-2">
-                  <BsCheckCircle className="text-danger fs-4" />
-                  <span className="fw-semibold">Verified Jobs</span>
+                <div className="about-badge-item">
+                  <BsCheckCircle />
+                  <span>Verified Jobs</span>
+                </div>
+                <div className="about-badge-item">
+                  <BsCheckCircle />
+                  <span>Pan India Coverage</span>
                 </div>
               </div>
+            </div>
+            <div className="about-col-img" data-aos="fade-left">
+              <img
+                src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=800"
+                alt="Real Estate"
+                className="about-feature-img"
+              />
             </div>
           </div>
         </div>
       </section>
 
-      {/* 3. Mission & Vision */}
-      <section className="section-padding bg-light">
-        <div className="container">
-          {/* Vision */}
-          <div className="row align-items-center mb-5 pb-5">
-            <div className="col-lg-6 order-2 order-lg-1" data-aos="fade-right">
-              <h5 className="text-danger fw-bold text-uppercase mb-2">Our Vision</h5>
-              <h2 className="fw-bold mb-4">To become India's most trusted hub</h2>
-              <p className="text-muted">
-                To become the most trusted and immediate hub for real estate employers to connect with their employees and job seekers.
-                We define our vision as being the most reliable platform that bridges the gap, empowering careers and fueling business growth.
+      {/* 3. Vision & Mission */}
+      <section className="about-section about-vm-section">
+        <div className="about-container">
+          <div className="about-vm-grid">
+            <div className="about-vm-card" data-aos="fade-up">
+              <div className="about-vm-icon">
+                <BsGlobe />
+              </div>
+              <h3>Our Vision</h3>
+              <p>
+                To become the most trusted and immediate hub for real estate
+                employers to connect with their employees and job seekers.
+                We define our vision as being the most reliable platform that
+                bridges the gap, empowering careers and fueling business growth.
               </p>
             </div>
-            <div className="col-lg-6 order-1 order-lg-2 mb-4 mb-lg-0 text-center" data-aos="fade-left">
-              <div className="vision-img-box">
-                <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80&w=2070" alt="Vision" className="img-fluid rounded-circle shadow-lg" style={{ width: '350px', height: '350px', objectFit: 'cover' }} />
-              </div>
-            </div>
-          </div>
 
-          {/* Mission */}
-          <div className="row align-items-center">
-            <div className="col-lg-6 mb-4 mb-lg-0 text-center" data-aos="fade-right">
-              <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=2070" alt="Mission" className="img-fluid rounded-4 shadow-lg" />
-            </div>
-            <div className="col-lg-6 ps-lg-5" data-aos="fade-left">
-              <h5 className="text-danger fw-bold text-uppercase mb-2">Our Mission</h5>
-              <h2 className="fw-bold mb-4">Empowering the Ecosystem</h2>
-              <p className="text-muted">
-                Our mission is to empower people worldwide to find work they love. We strive to simplify the hiring process, ensuring compliance, and creating a safe environment specific to the real estate sector.
+            <div className="about-vm-card" data-aos="fade-up" data-aos-delay="100">
+              <div className="about-vm-icon">
+                <BsLightbulb />
+              </div>
+              <h3>Our Mission</h3>
+              <p>
+                To empower people nationwide to find work they love. We strive
+                to simplify the hiring process, ensuring compliance, and
+                creating a safe environment specific to the real estate sector.
               </p>
             </div>
           </div>
@@ -100,27 +112,28 @@ const About = () => {
       </section>
 
       {/* 4. Core Values */}
-      <section className="section-padding bg-white">
-        <div className="container">
-          <div className="text-center mb-5">
-            <h2 className="section-title">Our Core <span className="highlight-red">Values</span></h2>
+      <section className="about-section about-values-section">
+        <div className="about-container">
+          <div className="about-section-header">
+            <span className="about-tag">WHAT DRIVES US</span>
+            <h2 className="about-heading">
+              Our Core <span className="about-highlight">Values</span>
+            </h2>
           </div>
 
-          <div className="row g-4">
+          <div className="about-values-grid">
             {[
-              { icon: <FaHandshake />, title: 'Service Beyond Self', desc: 'We serve with empathy and prioritize impact through each Poppinsaction.' },
-              { icon: <BsGlobe />, title: 'Sustainability', desc: 'We are committed to long-term impact and secure practices.' },
+              { icon: <FaHandshake />, title: 'Service Beyond Self', desc: 'We serve with empathy and prioritize impact through each action we take.' },
+              { icon: <BsGlobe />, title: 'Sustainability', desc: 'We are committed to long-term impact and secure practices for all.' },
               { icon: <BsPeople />, title: 'Empowerment', desc: 'We believe in encouraging individuals and leading teams to grow.' },
               { icon: <BsShieldCheck />, title: 'Integrity', desc: 'Upholding strict standards of honesty, ethics, and trust.' },
               { icon: <BsCheckCircle />, title: 'Accountability', desc: 'We take full responsibility for our actions and outcomes.' },
-              { icon: <BsLightbulb />, title: 'Transparency', desc: 'We value truth, research, and honesty in all Poppinsactions.' },
+              { icon: <BsLightbulb />, title: 'Transparency', desc: 'We value truth, research, and honesty in all interactions.' },
             ].map((val, i) => (
-              <div className="col-md-6 col-lg-4" key={i}>
-                <div className="value-card">
-                  <div className="value-icon-box">{val.icon}</div>
-                  <h5 className="fw-bold mt-3">{val.title}</h5>
-                  <p className="text-muted small mb-0">{val.desc}</p>
-                </div>
+              <div className="about-value-card" key={i} data-aos="fade-up" data-aos-delay={i * 80}>
+                <div className="about-value-icon">{val.icon}</div>
+                <h5>{val.title}</h5>
+                <p>{val.desc}</p>
               </div>
             ))}
           </div>
@@ -128,37 +141,46 @@ const About = () => {
       </section>
 
       {/* 5. What We Offer */}
-      <section className="section-padding bg-dark text-white">
-        <div className="container">
-          <h2 className="mb-5 border-start border-danger border-5 ps-3">What We Offer</h2>
-          <div className="row g-4 mb-5">
-            <div className="col-md-6">
-              <h5 className="text-white fw-bold">Exclusive Real Estate Focus</h5>
-              <p className="text-secondary small">We are dedicated purely to the real estate industry, understanding its unique needs unlike generic portals.</p>
-            </div>
-            <div className="col-md-6">
-              <h5 className="text-white fw-bold">Comprehensive Career Opportunities</h5>
-              <p className="text-secondary small">From entry-level to leadership roles, we cover sales, marketing, tech, legal, and more.</p>
-            </div>
-            <div className="col-md-6">
-              <h5 className="text-white fw-bold">Smart & User-Friendly Platform</h5>
-              <p className="text-secondary small">Our technology-driven platform ensures relevant matches using advanced filters and algorithms.</p>
-            </div>
-            <div className="col-md-6">
-              <h5 className="text-white fw-bold">Invaluable Resources</h5>
-              <p className="text-secondary small">Skill assessments, resume support, and career guidance tailored for real estate professionals.</p>
-            </div>
+      <section className="about-section about-offer-section">
+        <div className="about-container">
+          <div className="about-section-header">
+            <span className="about-tag-light">FOR YOU</span>
+            <h2 className="about-heading-light">What We Offer</h2>
           </div>
 
-          <div className="cta-box text-center p-5 rounded-4 bg-gradient-red">
-            <h3 className="fw-bold mb-4">Ready to Start Your Journey?</h3>
-            <div className="d-flex justify-content-center gap-3 flex-wrap">
-              <button className="btn btn-light rounded-pill px-4 fw-bold">
-                <BsPeople className="me-2" /> Real Estate APPLICANTS
-              </button>
-              <button className="btn btn-outline-light rounded-pill px-4 fw-bold">
-                <FaHandshake className="me-2" /> Real Estate RECRUITERS
-              </button>
+          <div className="about-offer-grid">
+            {[
+              { title: 'Exclusive Real Estate Focus', desc: 'Dedicated purely to the real estate industry, understanding its unique needs unlike generic portals.' },
+              { title: 'Comprehensive Career Opportunities', desc: 'From entry-level to leadership roles, we cover sales, marketing, tech, legal, and more.' },
+              { title: 'Smart & User-Friendly Platform', desc: 'Technology-driven platform ensuring relevant matches using advanced filters and algorithms.' },
+              { title: 'Invaluable Resources', desc: 'Skill assessments, resume support, and career guidance tailored for real estate professionals.' },
+            ].map((item, i) => (
+              <div className="about-offer-card" key={i} data-aos="fade-up" data-aos-delay={i * 80}>
+                <span className="about-offer-num">0{i + 1}</span>
+                <h4>{item.title}</h4>
+                <p>{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 6. CTA */}
+      <section className="about-section about-cta-section">
+        <div className="about-container">
+          <div className="about-cta-box" data-aos="zoom-in">
+            <h2>Ready to Start Your Journey?</h2>
+            <p>
+              Whether you're a job seeker or a recruiter, we're here to
+              help you find the perfect match in real estate.
+            </p>
+            <div className="about-cta-btns">
+              <a href="/jobs" className="about-cta-btn primary">
+                <BsPeople /> Browse Jobs <BsArrowRight />
+              </a>
+              <a href="/contact" className="about-cta-btn secondary">
+                <FaHandshake /> Contact Us <BsArrowRight />
+              </a>
             </div>
           </div>
         </div>

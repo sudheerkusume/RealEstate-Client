@@ -33,35 +33,39 @@ const City = () => {
       <p className="city-subtitle">TOP CITIES</p>
       <h3 className="city-title">Explore Jobs by City</h3>
 
-      <div className="city-grid">
+      <div className="row py-5 mb-5 g-4 justify-content-center">
         {cities.map((city) => (
           <div
-            className="city-card"
-            key={city.name} // ✅ stable unique key
+            className="col-lg-3 col-md-6"
+            key={city.name}
             onClick={() =>
               navigate(`/jobs/city/${encodeURIComponent(city.name)}`)
             }
           >
-            {/* ✅ render image ONLY if exists */}
-            {city.image && (
-              <img
-                src={city.image}
-                alt={city.name}
-                loading="lazy"
-                decoding="async"
-              />
-            )}
+            <div className="city-card">
+              {/* ✅ render image ONLY if exists */}
+              {city.image && (
+                <img
+                  src={city.image}
+                  alt={city.name}
+                  loading="lazy"
+                  decoding="async"
+                />
+              )}
 
-            <div className="city-overlay">
-              <div>
-                <h4>{city.name}</h4>
-                <p>{city.jobs} Jobs Available</p>
+              <div className="city-overlay">
+                <div>
+                  <h4>{city.name}</h4>
+                  <p>{city.jobs} Jobs Available</p>
+                </div>
+                <IoIosArrowForward className="city-arrow" />
               </div>
-              <IoIosArrowForward className="city-arrow" />
             </div>
           </div>
         ))}
       </div>
+
+
     </section>
   );
 };

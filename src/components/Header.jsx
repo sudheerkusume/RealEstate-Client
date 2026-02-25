@@ -46,8 +46,8 @@ const Header = () => {
         <div className="container main">
           {/* Logo */}
           <NavLink className="navbar-brand d-flex flex-column align-items-start" to="/" onClick={closeNavbar}>
-            <img src={Logo} alt="RealBeez Logo" width="150" className="logo-img" />
-            <span className="logo-tagline text-muted">Your trusted real estate partner</span>
+            <img src={Logo} alt="RealBeez Logo" width="110" className="logo-img" />
+            <span className="logo-tagline text-muted mt-0">Your trusted real estate partner</span>
           </NavLink>
 
           {/* Mobile Toggle */}

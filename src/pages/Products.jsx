@@ -1,6 +1,7 @@
 import React from 'react'
 import Home from './Home'
 import Jobs from './Jobs'
+import PopularCities from './PopularCities'
 import City from './City'
 import Banner from './Banner'
 import MarqueeSection from './MarqueeSection'
@@ -13,11 +14,12 @@ const Products = () => {
     <div>
       <Home />
       <Jobs />
-      <Services />
-      <City />
-      <Certifications />
+      <PopularCities />
       <Banner />
       <MarqueeSection />
+      <Services />
+      <Certifications />
+      <City />
       <RecruitmentServices />
     </div>
   )
