@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import api from "../config/api";
 import {
@@ -127,17 +128,6 @@ const Projects = ({ user }) => {
 
             alert(`Error adding project: ${errorMsg}${detailMsg}\n\nPlease check your file sizes and Cloudinary settings.`);
         }
-    };
-
-    const stepIconStyle = {
-        width: '40px',
-        height: '40px',
-        borderRadius: '50%',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontWeight: 'bold',
-        fontSize: '18px'
     };
 
     return (

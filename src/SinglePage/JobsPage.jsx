@@ -4,10 +4,10 @@ import React, { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  BsGeoAlt, BsClock, BsBriefcase, BsSearch,
+  BsGeoAlt, BsClock, BsBriefcase,
   BsPeople, BsBuilding, BsBuildingCheck, BsHeadset,
   BsMegaphone, BsCode, BsCpu, BsCalculator,
-  BsPentagon, BsJournalText, BsCurrencyRupee, BsArrowRight
+  BsPentagon, BsJournalText, BsCurrencyRupee
 } from "react-icons/bs";
 import "./JobsPageLuxury.css";
 
