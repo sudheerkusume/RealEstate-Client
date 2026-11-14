@@ -44,6 +44,7 @@ const Login = () => {
                     navigate("/recruiter/dashboard");
                     break;
                 case "company":
+                case "admin":
                     navigate("/company/dashboard");
                     break;
                 default:

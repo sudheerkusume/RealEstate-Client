@@ -1,23 +1,27 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-
-const items = [
-    { title: "Brigade", img: "/companies-icons/brigade.jpeg", slug: "brigade-group" },
-    { title: "Cybercity", img: "/companies-icons/cybercity.jpg", slug: "cybercity" },
-    { title: "DLF", img: "/companies-icons/dlf.png", slug: "dlf-india" },
-    { title: "Honer", img: "/companies-icons/honer.jpg", slug: "honer-homes" },
-    { title: "Jayabheri", img: "/companies-icons/jayabheri.jpg", slug: "jayabheri-properties" },
-    { title: "Lodha", img: "/companies-icons/lodha.jpg", slug: "lodha-group" },
-    { title: "Muppa", img: "/companies-icons/muppa.jpeg", slug: "muppa-projects" },
-    { title: "My Home Group", img: "/companies-icons/myhomegroup.png", slug: "my-home-group" },
-    { title: "NCC", img: "/companies-icons/ncc.jpg", slug: "ncc-urban" },
-    { title: "Prestige Group", img: "/companies-icons/prestigegroup.png", slug: "prestige-group" },
-    { title: "Radhey", img: "/companies-icons/radhey.jpg", slug: "radhey-constructions" },
-    { title: "Rajapushpa", img: "/companies-icons/rajpushpagroup.jpg", slug: "rajapushpa-properties" },
-    { title: "Ramky", img: "/companies-icons/ramkeygroup.jpg", slug: "ramky-estates" },
-];
+import api from "../config/api";
 
 const MarqueeSection = () => {
+    const [companies, setCompanies] = useState([]);
+
+    useEffect(() => {
+        api.get("/companies")
+            .then(res => {
+                setCompanies(res.data);
+            })
+            .catch(err => console.error("Error fetching companies for marquee:", err));
+    }, []);
+
+    // Fallback items if API is empty or fails
+    const defaultItems = [
+        { name: "Prestige Group", logo: "/companies-icons/prestigegroup.png", _id: "prestige-group" },
+        { name: "Lodha", logo: "/companies-icons/lodha.jpg", _id: "lodha-group" },
+        { name: "Brigade", logo: "/companies-icons/brigade.jpeg", _id: "brigade-group" },
+    ];
+
+    const displayItems = companies.length > 0 ? companies : defaultItems;
+
     return (
         <section className="marquee-wrapper py-5">
             <div className="container text-center mb-5">
@@ -26,14 +30,22 @@ const MarqueeSection = () => {
             </div>
             <div className="marquee">
                 <div className="marquee-track">
-                    {[...items, ...items].map((item, index) => (
+                    {[...displayItems, ...displayItems].map((item, index) => (
                         <Link
-                            to={`/companies/${item.slug}`}
+                            to={`/companies/${item._id}`}
                             className="marquee-card"
                             key={index}
                             style={{ textDecoration: 'none' }}
                         >
-                            <img src={item.img} alt={item.title} className="marquee-logo" />
+                            <img
+                                src={item.logo && item.logo.startsWith('http') ? item.logo : `${api.defaults.baseURL}${item.logo}`}
+                                alt={item.name}
+                                className="marquee-logo"
+                                onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = "/companies-icons/brigade.jpeg"; // Fallback image
+                                }}
+                            />
                         </Link>
                     ))}
                 </div>

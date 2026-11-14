@@ -34,8 +34,8 @@ const CompanyAbout = ({ company }) => {
                                     <div className="distinctive-feature-item" key={i}>
                                         <div className="feature-number">{i + 1}</div>
                                         <div className="feature-text">
-                                            <h6>{item.title}</h6>
-                                            <p>{item.desc}</p>
+                                            <h6>{typeof item === 'string' ? item : item.title}</h6>
+                                            {item.desc && <p>{item.desc}</p>}
                                         </div>
                                     </div>
                                 ))}
@@ -129,7 +129,7 @@ const CompanyAbout = ({ company }) => {
                             <div className="col-md-3 col-6" key={i}>
                                 <div className="team-member-card text-center">
                                     <div className="member-img-wrapper mx-auto" style={{ width: '150px', height: '150px' }}>
-                                        <img src={m.img} alt={m.name} className="img-fluid rounded-circle" />
+                                        <img src={m.image} alt={m.name} className="img-fluid rounded-circle" />
                                     </div>
                                     <h5 className="member-name mt-3">{m.name}</h5>
                                     <p className="member-role">{m.role}</p>

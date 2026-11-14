@@ -7,7 +7,7 @@ import {
     BsCheckCircleFill
 } from "react-icons/bs";
 
-const Projects = () => {
+const Projects = ({ user }) => {
     const [formData, setFormData] = useState({
         companyId: "",
         title: "",
@@ -54,20 +54,25 @@ const Projects = () => {
         setConnectivity(updated);
     };
 
-    // Fetch Companies
+    // Fetch Companies (Fallback if no user prop)
     useEffect(() => {
-        api.get("/companies")
-            .then(res => {
-                // Ensure res.data is an array
-                if (Array.isArray(res.data)) {
-                    setCompanies(res.data);
-                } else {
-                    console.warn("Expected companies array, got:", res.data);
-                    setCompanies([]);
-                }
-            })
-            .catch(err => console.error("Error fetching companies:", err));
-    }, []);
+        if (!user?._id) {
+            api.get("/companies")
+                .then(res => {
+                    if (Array.isArray(res.data)) {
+                        setCompanies(res.data);
+                    }
+                })
+                .catch(err => console.error("Error fetching companies:", err));
+        }
+    }, [user]);
+
+    // Auto-fill companyId from logged in user
+    useEffect(() => {
+        if (user?._id) {
+            setFormData(prev => ({ ...prev, companyId: user._id }));
+        }
+    }, [user]);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -136,109 +141,216 @@ const Projects = () => {
     };
 
     return (
-        <div className="container py-5" style={{ maxWidth: '900px' }}>
+        <div className="neo-container py-5 animate-fade-in">
             {/* Header Section */}
-            <div className="text-center mb-5 pb-3">
-                <h1 className="fw-bold text-primary mb-2">Publish New Property</h1>
-                <p className="text-muted fs-5">Fill in the details below to add a new project to the website.</p>
+            <div className="text-center mb-5">
+                <h1 className="display-4 fw-bold mb-2 neo-text-gradient">Publish New Property</h1>
+                <p className="text-muted fs-5">Craft a stunning presence for your next real estate masterpiece.</p>
             </div>
 
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className="neo-form">
 
                 {/* STEP 1: WHO IS BUILDING IT? */}
-                <div className="card shadow-sm border-0 mb-5 rounded-4 overflow-hidden">
-                    <div className="p-4 bg-white border-bottom d-flex align-items-center gap-3">
-                        <div className="bg-primary text-white shadow-sm" style={stepIconStyle}>1</div>
-                        <h4 className="mb-0 fw-bold">Select Developer & Title</h4>
+                <div className="neo-card mb-5">
+                    <div className="neo-card-header">
+                        <div className="neo-icon-circle bg-primary text-white">
+                            <BsCheckCircleFill />
+                        </div>
+                        <div className="neo-header-info">
+                            <h4 className="mb-0 fw-bold">Job Identity</h4>
+                            <p className="mb-0 text-muted fs-13">📝 Basic details about the company and the role</p>
+                        </div>
                     </div>
-                    <div className="card-body p-4">
+
+                    <div className="neo-card-body">
                         <div className="row g-4">
+                            {/* Company Selection */}
+                            <div className="col-lg-6">
+                                <label className="neo-label">
+                                    <span className="neo-emoji"></span> Company Identity *
+                                </label>
+                                <div className="neo-input-wrapper">
+                                    {user?._id ? (
+                                        <div className="neo-inner-card bg-white border-0 py-3 px-4 d-flex align-items-center gap-3">
+                                            {/* <div className="neo-icon-circle bg-primary text-white" style={{ width: '45px', height: '45px', fontSize: '18px', borderRadius: '12px' }}>
+
+                                            </div> */}
+                                            <div>
+                                                <div className="fw-bold text-dark fs-5">{user.name}</div>
+                                                <div className="text-muted small text-uppercase fw-semibold tracking-wider" style={{ fontSize: '10px', letterSpacing: '1px' }}>
+                                                    Verified Project Developer
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <>
+                                            <select
+                                                name="companyId"
+                                                className="neo-input"
+                                                value={formData.companyId}
+                                                onChange={handleChange}
+                                                required
+                                            >
+                                                <option value="">Select Company</option>
+                                                {companies.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
+                                            </select>
+                                            <div className="neo-input-hint">Select the branding company for this project</div>
+                                        </>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Category Select (Placeholder as per image) */}
+                            <div className="col-lg-6">
+                                <label className="neo-label">
+                                    <span className="neo-emoji">📂</span> Category *
+                                </label>
+                                <div className="neo-input-wrapper">
+                                    <select className="neo-input">
+                                        <option value="">Select Category</option>
+                                        <option value="Residential">Residential</option>
+                                        <option value="Commercial">Commercial</option>
+                                        <option value="Luxury">Luxury</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            {/* Project Title */}
+                            <div className="col-12 mt-5">
+                                <div className="neo-inner-card">
+                                    <label className="neo-label neo-label-sm">
+                                        <span className="neo-emoji text-danger">✏️</span> Job Title *
+                                        <span className="text-muted fw-normal ms-2">— What Is The Job Called?</span>
+                                    </label>
+                                    <div className="neo-input-pill-wrapper">
+                                        <input
+                                            className="neo-input-pill"
+                                            name="title"
+                                            placeholder="e.g. Senior Real Estate Consultant"
+                                            value={formData.title}
+                                            onChange={handleChange}
+                                            required
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Subtitle / Location Tagline */}
+                            <div className="col-md-12">
+                                <label className="neo-label">
+                                    <span className="neo-emoji">🎯</span> Area / Location Sub-title
+                                </label>
+                                <input
+                                    className="neo-input"
+                                    name="subtitle"
+                                    placeholder="e.g. Near Dubai Mall"
+                                    value={formData.subtitle}
+                                    onChange={handleChange}
+                                />
+                            </div>
+
+                            {/* Description */}
                             <div className="col-12">
-                                <label className="form-label fw-bold text-secondary mb-1">Which company is building this? *</label>
-                                <select name="companyId" className="form-select form-select-lg border-2" value={formData.companyId} onChange={handleChange} required>
-                                    <option value="">-- Click to choose a company --</option>
-                                    {companies.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
-                                </select>
-                            </div>
-                            <div className="col-md-6">
-                                <label className="form-label fw-bold text-secondary mb-1">What is the Project Name? *</label>
-                                <input className="form-control form-control-lg border-2" name="title" placeholder="e.g. Skyline Apartments" value={formData.title} onChange={handleChange} required />
-                            </div>
-                            <div className="col-md-6">
-                                <label className="form-label fw-bold text-secondary mb-1">Area / Location Sub-title</label>
-                                <input className="form-control form-control-lg border-2" name="subtitle" placeholder="e.g. Near Dubai Mall" value={formData.subtitle} onChange={handleChange} />
-                            </div>
-                            <div className="col-12">
-                                <label className="form-label fw-bold text-secondary mb-1">Write a description (About the project) *</label>
-                                <textarea className="form-control border-2" name="description" rows="4" placeholder="Tell people why they should buy this property..." value={formData.description} onChange={handleChange} required />
+                                <label className="neo-label">
+                                    <span className="neo-emoji">📖</span> Write a description (About the project) *
+                                </label>
+                                <textarea
+                                    className="neo-input p-4"
+                                    name="description"
+                                    rows="5"
+                                    placeholder="Tell people why they should buy this property..."
+                                    value={formData.description}
+                                    onChange={handleChange}
+                                    required
+                                />
                             </div>
                         </div>
                     </div>
                 </div>
 
                 {/* STEP 2: PRICE & SPECS */}
-                <div className="card shadow-sm border-0 mb-5 rounded-4 overflow-hidden">
-                    <div className="p-4 bg-white border-bottom d-flex align-items-center gap-3">
-                        <div className="bg-info text-white shadow-sm" style={stepIconStyle}>2</div>
-                        <h4 className="mb-0 fw-bold">Price & Details</h4>
+                <div className="neo-card mb-5">
+                    <div className="neo-card-header">
+                        <div className="neo-icon-circle bg-info text-white">
+                            <span className="fw-bold">₹</span>
+                        </div>
+                        <div className="neo-header-info">
+                            <h4 className="mb-0 fw-bold">Price & Technical Details</h4>
+                            <p className="mb-0 text-muted fs-13">⚙️ Essential metrics for the property</p>
+                        </div>
                     </div>
-                    <div className="card-body p-4">
+                    <div className="neo-card-body">
                         <div className="row g-4">
                             <div className="col-md-6">
-                                <label className="form-label fw-bold text-secondary mb-1">Starting Price (Money) *</label>
-                                <div className="input-group">
-                                    <span className="input-group-text bg-light border-2 fw-bold">₹ / INR</span>
-                                    <input className="form-control form-control-lg border-2" name="price" placeholder="e.g. 500,000" value={formData.price} onChange={handleChange} />
+                                <label className="neo-label">
+                                    <span className="neo-emoji">💰</span> Starting Price *
+                                </label>
+                                <div className="neo-input-group">
+                                    <span className="neo-input-group-text">₹ INR</span>
+                                    <input className="neo-input" name="price" placeholder="e.g. 5,000,000" value={formData.price} onChange={handleChange} />
                                 </div>
                             </div>
                             <div className="col-md-6">
-                                <label className="form-label fw-bold text-secondary mb-1">When will it be finished?</label>
-                                <input className="form-control form-control-lg border-2" name="completion" placeholder="e.g. Mid-2027" value={formData.completion} onChange={handleChange} />
+                                <label className="neo-label">
+                                    <span className="neo-emoji">📅</span> Completion Date
+                                </label>
+                                <input className="neo-input" name="completion" placeholder="e.g. Mid-2027" value={formData.completion} onChange={handleChange} />
                             </div>
                             <div className="col-md-6">
-                                <label className="form-label fw-bold text-secondary mb-1">How many Bedrooms?</label>
-                                <input className="form-control form-control-lg border-2" name="bedrooms" placeholder="e.g. 1 & 2 Bedrooms" value={formData.bedrooms} onChange={handleChange} />
+                                <label className="neo-label">
+                                    <span className="neo-emoji">🛏️</span> Bedroom Specs
+                                </label>
+                                <input className="neo-input" name="bedrooms" placeholder="e.g. 1 & 2 Bedrooms" value={formData.bedrooms} onChange={handleChange} />
                             </div>
                             <div className="col-md-6">
-                                <label className="form-label fw-bold text-secondary mb-1">How big is the home? (Area)</label>
-                                <input className="form-control form-control-lg border-2" name="apartments" placeholder="e.g. 800 - 1500 Sq.Ft" value={formData.apartments} onChange={handleChange} />
+                                <label className="neo-label">
+                                    <span className="neo-emoji">📐</span> Area / Sq.Ft
+                                </label>
+                                <input className="neo-input" name="apartments" placeholder="e.g. 800 - 1500 Sq.Ft" value={formData.apartments} onChange={handleChange} />
                             </div>
                             <div className="col-12">
-                                <label className="form-label fw-bold text-secondary mb-1">Explain the Payment Plan</label>
-                                <input className="form-control form-control-lg border-2" name="paymentPlan" placeholder="e.g. Pay 1% every month" value={formData.paymentPlan} onChange={handleChange} />
+                                <label className="neo-label">
+                                    <span className="neo-emoji">💳</span> Payment Plan Details
+                                </label>
+                                <input className="neo-input" name="paymentPlan" placeholder="e.g. Pay 1% every month" value={formData.paymentPlan} onChange={handleChange} />
                             </div>
                         </div>
                     </div>
                 </div>
 
                 {/* STEP 2.5: CONNECTIVITY & LANDMARKS */}
-                <div className="card shadow-sm border-0 mb-5 rounded-4 overflow-hidden">
-                    <div className="p-4 bg-white border-bottom d-flex align-items-center gap-3">
-                        <div className="bg-dark text-white shadow-sm" style={stepIconStyle}>+</div>
-                        <h4 className="mb-0 fw-bold">Connectivity & Landmarks</h4>
+                <div className="neo-card mb-5">
+                    <div className="neo-card-header">
+                        <div className="neo-icon-circle bg-dark text-white">
+                            <span className="fw-bold">+</span>
+                        </div>
+                        <div className="neo-header-info">
+                            <h4 className="mb-0 fw-bold">Connectivity & Landmarks</h4>
+                            <p className="mb-0 text-muted fs-13">📍 Nearby locations and commute times</p>
+                        </div>
                     </div>
-                    <div className="card-body p-4">
+                    <div className="neo-card-body">
                         <div className="d-flex justify-content-between align-items-center mb-4">
                             <h5 className="mb-0 fw-bold text-primary small text-uppercase tracking-wider">Nearby Locations & Distances</h5>
-                            <button type="button" onClick={addConnectivity} className="btn btn-sm btn-outline-primary rounded-pill px-3">Add Landmark +</button>
+                            <button type="button" onClick={addConnectivity} className="premium-btn py-2 px-4 rounded-pill">Add Landmark +</button>
                         </div>
-                        <div className="row g-3">
+                        <div className="row g-4">
                             {connectivity.map((item, i) => (
                                 <div className="col-12" key={i}>
-                                    <div className="p-3 border rounded-3 bg-light position-relative">
-                                        <button type="button" className="btn btn-sm text-danger position-absolute top-0 end-0 m-2" onClick={() => removeConnectivity(i)}><BsTrash /></button>
-                                        <div className="row g-3">
+                                    <div className="neo-inner-card position-relative p-4">
+                                        <button type="button" className="btn btn-sm text-danger position-absolute top-0 end-0 m-3" onClick={() => removeConnectivity(i)}><BsTrash /></button>
+                                        <div className="row g-4">
                                             <div className="col-md-4">
-                                                <label className="form-label small fw-bold">Label (e.g. Metro Station)</label>
-                                                <input className="form-control" placeholder="What is it?" value={item.label} onChange={(e) => handleConnectivityChange(i, "label", e.target.value)} />
+                                                <label className="neo-label neo-label-sm">Label</label>
+                                                <input className="neo-input" placeholder="Metro Station" value={item.label} onChange={(e) => handleConnectivityChange(i, "label", e.target.value)} />
                                             </div>
                                             <div className="col-md-4">
-                                                <label className="form-label small fw-bold">Time (e.g. 5 Mins Drive)</label>
-                                                <input className="form-control" placeholder="How far?" value={item.value} onChange={(e) => handleConnectivityChange(i, "value", e.target.value)} />
+                                                <label className="neo-label neo-label-sm">Time/Distance</label>
+                                                <input className="neo-input" placeholder="5 Mins Drive" value={item.value} onChange={(e) => handleConnectivityChange(i, "value", e.target.value)} />
                                             </div>
                                             <div className="col-md-4">
-                                                <label className="form-label small fw-bold">Icon Type</label>
-                                                <select className="form-select" value={item.iconType} onChange={(e) => handleConnectivityChange(i, "iconType", e.target.value)}>
+                                                <label className="neo-label neo-label-sm">Icon Type</label>
+                                                <select className="neo-input" value={item.iconType} onChange={(e) => handleConnectivityChange(i, "iconType", e.target.value)}>
                                                     <option value="default">Default</option>
                                                     <option value="metro">Metro / Train</option>
                                                     <option value="mall">Shopping / Mall</option>
@@ -258,212 +370,170 @@ const Projects = () => {
                 </div>
 
                 {/* STEP 3: WHERE IS IT? */}
-                <div className="card shadow-sm border-0 mb-5 rounded-4 overflow-hidden">
-                    <div className="p-4 bg-white border-bottom d-flex align-items-center gap-3">
-                        <div className="bg-success text-white shadow-sm" style={stepIconStyle}>3</div>
-                        <h4 className="mb-0 fw-bold">Location & Map</h4>
+                <div className="neo-card mb-5">
+                    <div className="neo-card-header">
+                        <div className="neo-icon-circle bg-success text-white">
+                            <span className="fw-bold">3</span>
+                        </div>
+                        <div className="neo-header-info">
+                            <h4 className="mb-0 fw-bold">Location & Map</h4>
+                            <p className="mb-0 text-muted fs-13">🌏 Mapping the exact address and virtual tour</p>
+                        </div>
                     </div>
-                    <div className="card-body p-4">
+                    <div className="neo-card-body">
                         <div className="row g-4">
                             <div className="col-12">
-                                <label className="form-label fw-bold text-secondary mb-1">Final Location Name</label>
-                                <input className="form-control form-control-lg border-2" name="location" placeholder="e.g. Downtown Dubai" value={formData.location} onChange={handleChange} />
+                                <label className="neo-label">
+                                    <span className="neo-emoji">🎯</span> Final Location Name
+                                </label>
+                                <input className="neo-input" name="location" placeholder="e.g. Downtown Dubai" value={formData.location} onChange={handleChange} />
                             </div>
                             <div className="col-12">
-                                <label className="form-label fw-bold text-secondary mb-1">Nearby Places (Location Advantages)</label>
-                                <textarea className="form-control border-2" name="locationDescription" rows="2" placeholder="List top 3 nearby places..." value={formData.locationDescription} onChange={handleChange} />
+                                <label className="neo-label">
+                                    <span className="neo-emoji">🌆</span> Nearby Places (Location Advantages)
+                                </label>
+                                <textarea className="neo-input" name="locationDescription" rows="2" placeholder="List top 3 nearby places..." value={formData.locationDescription} onChange={handleChange} />
                             </div>
                             <div className="col-md-6">
-                                <label className="form-label fw-bold text-secondary mb-1">Map Embed Code/Link</label>
-                                <input className="form-control border-2 p-3" name="mapEmbedLink" placeholder="Paste map link here" value={formData.mapEmbedLink} onChange={handleChange} />
+                                <label className="neo-label">
+                                    <span className="neo-emoji">🗺️</span> Map Embed Code/Link
+                                </label>
+                                <input className="neo-input" name="mapEmbedLink" placeholder="Paste map link here" value={formData.mapEmbedLink} onChange={handleChange} />
                             </div>
                             <div className="col-md-6">
-                                <label className="form-label fw-bold text-secondary mb-1">Youtube / 3D Tour Link</label>
-                                <input className="form-control border-2 p-3" name="virtualTourLink" placeholder="Link to video or virtual tour" value={formData.virtualTourLink} onChange={handleChange} />
+                                <label className="neo-label">
+                                    <span className="neo-emoji">📹</span> Youtube / 3D Tour Link
+                                </label>
+                                <input className="neo-input" name="virtualTourLink" placeholder="Link to video or virtual tour" value={formData.virtualTourLink} onChange={handleChange} />
                             </div>
                         </div>
                     </div>
                 </div>
 
                 {/* STEP 4: VIDEOS & PHOTOS */}
-                <div className="card shadow-sm border-0 mb-5 rounded-4 overflow-hidden">
-                    <div className="p-4 bg-white border-bottom d-flex align-items-center gap-3">
-                        <div className="bg-warning text-dark shadow-sm" style={stepIconStyle}>4</div>
-                        <h4 className="mb-0 fw-bold">Upload Media Files</h4>
+                <div className="neo-card mb-5">
+                    <div className="neo-card-header">
+                        <div className="neo-icon-circle bg-warning text-dark">
+                            <span className="fw-bold">4</span>
+                        </div>
+                        <div className="neo-header-info">
+                            <h4 className="mb-0 fw-bold">Upload Media Files</h4>
+                            <p className="mb-0 text-muted fs-13">📸 High-quality visuals for your project</p>
+                        </div>
                     </div>
-                    <div className="card-body p-4">
-                        <div className="row g-4">
+                    <div className="neo-card-body">
+                        <div className="row g-5">
                             <div className="col-md-6">
-                                <div className="p-4 border-2 border-dashed rounded-4 bg-light text-center">
-                                    <BsUpload className="text-primary fs-2 mb-2" />
+                                <div className="neo-upload-card h-100">
+                                    <BsUpload className="neo-upload-icon text-primary" />
                                     <label className="fw-bold d-block mb-2">Main Header Video</label>
-                                    <input type="file" className="form-control border-0 shadow-none" onChange={(e) => setHeroVideo(e.target.files[0])} />
+                                    <input type="file" className="neo-file-input" onChange={(e) => setHeroVideo(e.target.files[0])} />
                                     {heroVideo && <p className="mt-2 text-success small fw-bold">Ready: {heroVideo.name}</p>}
                                 </div>
                             </div>
                             <div className="col-md-6">
-                                <div className="p-4 border-2 border-dashed rounded-4 bg-light text-center h-100">
-                                    <BsUpload className="text-info fs-2 mb-2" />
-                                    <label className="fw-bold d-block mb-2">Features Background (Single)</label>
-                                    <input type="file" className="form-control border-0 shadow-none" onChange={(e) => setAmenitiesBackground(e.target.files[0])} />
+                                <div className="neo-upload-card h-100">
+                                    <BsUpload className="neo-upload-icon text-info" />
+                                    <label className="fw-bold d-block mb-2">Features Background</label>
+                                    <input type="file" className="neo-file-input" onChange={(e) => setAmenitiesBackground(e.target.files[0])} />
                                     {amenitiesBackground && <p className="mt-2 text-success small fw-bold">Ready: {amenitiesBackground.name}</p>}
                                 </div>
                             </div>
+
                             {/* PARALLAX BACKGROUND IMAGES */}
-                            <div className="col-12">
-                                <label className="fw-bold d-block mb-3 text-secondary">Parallax Background Images (Scroll Effect)</label>
-                                <div className="d-flex flex-wrap gap-3">
+                            <div className="col-12 mt-4">
+                                <label className="neo-label">
+                                    <span className="neo-emoji">✨</span> Parallax Background Images (Scroll Effect)
+                                </label>
+                                <div className="d-flex flex-wrap gap-4 mt-3">
                                     {backgroundImages.map((file, index) => (
-                                        <div key={index} className="position-relative" style={{ width: '120px', height: '120px' }}>
-                                            <img
-                                                src={URL.createObjectURL(file)}
-                                                alt="Preview"
-                                                className="w-100 h-100 object-fit-cover rounded-3 border"
-                                            />
-                                            <button
-                                                type="button"
-                                                className="btn btn-danger btn-sm position-absolute top-0 end-0 m-1 rounded-circle p-1 d-flex shadow-sm"
-                                                onClick={() => removeFile(index, setBackgroundImages, backgroundImages)}
-                                            >
-                                                <BsTrash size={12} />
-                                            </button>
+                                        <div key={index} className="neo-preview-wrapper shadow-lg">
+                                            <img src={URL.createObjectURL(file)} alt="Preview" className="neo-preview-img" />
+                                            <button type="button" className="neo-remove-btn" onClick={() => removeFile(index, setBackgroundImages, backgroundImages)}><BsTrash size={12} /></button>
                                         </div>
                                     ))}
-                                    <label
-                                        className="d-flex flex-column align-items-center justify-content-center border-2 border-dashed rounded-3 bg-light cursor-pointer hover-bg-white transition-all mb-0"
-                                        style={{ width: '120px', height: '120px', cursor: 'pointer', borderStyle: 'dashed' }}
-                                    >
-                                        <BsPlusCircle className="text-secondary fs-3 mb-1" />
-                                        <span className="small text-muted fw-bold" style={{ fontSize: '10px' }}>Add Photo</span>
-                                        <input
-                                            type="file"
-                                            multiple
-                                            className="d-none"
-                                            onChange={(e) => handleFileAppend(e, setBackgroundImages, backgroundImages)}
-                                        />
+                                    <label className="neo-add-media-btn">
+                                        <BsPlusCircle className="fs-3 mb-1" />
+                                        <span className="fw-bold fs-10">Add Photo</span>
+                                        <input type="file" multiple className="d-none" onChange={(e) => handleFileAppend(e, setBackgroundImages, backgroundImages)} />
                                     </label>
                                 </div>
                             </div>
 
                             {/* GALLERY IMAGES */}
-                            <div className="col-12">
-                                <label className="fw-bold d-block mb-3 text-secondary">Multiple Project Photos (Gallery)</label>
-                                <div className="d-flex flex-wrap gap-3">
+                            <div className="col-12 mt-4">
+                                <label className="neo-label">
+                                    <span className="neo-emoji">🖼️</span> Multiple Project Photos (Gallery)
+                                </label>
+                                <div className="d-flex flex-wrap gap-4 mt-3">
                                     {gallery.map((file, index) => (
-                                        <div key={index} className="position-relative" style={{ width: '120px', height: '120px' }}>
-                                            <img
-                                                src={URL.createObjectURL(file)}
-                                                alt="Gallery Preview"
-                                                className="w-100 h-100 object-fit-cover rounded-3 border"
-                                            />
-                                            <button
-                                                type="button"
-                                                className="btn btn-danger btn-sm position-absolute top-0 end-0 m-1 rounded-circle p-1 d-flex shadow-sm"
-                                                onClick={() => removeFile(index, setGallery, gallery)}
-                                            >
-                                                <BsTrash size={12} />
-                                            </button>
+                                        <div key={index} className="neo-preview-wrapper shadow-lg">
+                                            <img src={URL.createObjectURL(file)} alt="Gallery" className="neo-preview-img" />
+                                            <button type="button" className="neo-remove-btn" onClick={() => removeFile(index, setGallery, gallery)}><BsTrash size={12} /></button>
                                         </div>
                                     ))}
-                                    <label
-                                        className="d-flex flex-column align-items-center justify-content-center border-2 border-dashed rounded-3 bg-light cursor-pointer hover-bg-white transition-all mb-0"
-                                        style={{ width: '120px', height: '120px', cursor: 'pointer', borderStyle: 'dashed' }}
-                                    >
-                                        <BsPlusCircle className="text-secondary fs-3 mb-1" />
-                                        <span className="small text-muted fw-bold" style={{ fontSize: '10px' }}>Add Photo</span>
-                                        <input
-                                            type="file"
-                                            multiple
-                                            className="d-none"
-                                            onChange={(e) => handleFileAppend(e, setGallery, gallery)}
-                                        />
+                                    <label className="neo-add-media-btn">
+                                        <BsPlusCircle className="fs-3 mb-1" />
+                                        <span className="fw-bold fs-10">Add Photo</span>
+                                        <input type="file" multiple className="d-none" onChange={(e) => handleFileAppend(e, setGallery, gallery)} />
                                     </label>
                                 </div>
-                                {gallery.length > 0 && <p className="mt-3 text-primary fw-bold small">{gallery.length} photos selected for gallery</p>}
-                            </div>
-
-                            {/* AMENITIES GALLERY IMAGES */}
-                            <div className="col-12">
-                                <label className="fw-bold d-block mb-3 text-secondary">Amenities Carousel Photos (Specific to Amenities Section)</label>
-                                <div className="d-flex flex-wrap gap-3">
-                                    {amenitiesGallery.map((file, index) => (
-                                        <div key={index} className="position-relative" style={{ width: '120px', height: '120px' }}>
-                                            <img
-                                                src={URL.createObjectURL(file)}
-                                                alt="Amenities Preview"
-                                                className="w-100 h-100 object-fit-cover rounded-3 border"
-                                            />
-                                            <button
-                                                type="button"
-                                                className="btn btn-danger btn-sm position-absolute top-0 end-0 m-1 rounded-circle p-1 d-flex shadow-sm"
-                                                onClick={() => removeFile(index, setAmenitiesGallery, amenitiesGallery)}
-                                            >
-                                                <BsTrash size={12} />
-                                            </button>
-                                        </div>
-                                    ))}
-                                    <label
-                                        className="d-flex flex-column align-items-center justify-content-center border-2 border-dashed rounded-3 bg-light cursor-pointer hover-bg-white transition-all mb-0"
-                                        style={{ width: '120px', height: '120px', cursor: 'pointer', borderStyle: 'dashed' }}
-                                    >
-                                        <BsPlusCircle className="text-secondary fs-3 mb-1" />
-                                        <span className="small text-muted fw-bold" style={{ fontSize: '10px' }}>Add Photo</span>
-                                        <input
-                                            type="file"
-                                            multiple
-                                            className="d-none"
-                                            onChange={(e) => handleFileAppend(e, setAmenitiesGallery, amenitiesGallery)}
-                                        />
-                                    </label>
-                                </div>
-                                {amenitiesGallery.length > 0 && <p className="mt-3 text-success fw-bold small">{amenitiesGallery.length} photos selected for amenities</p>}
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {/* STEP 5: ATTRACTIONS & QUESTIONS */}
-                <div className="card shadow-sm border-0 mb-5 rounded-4 overflow-hidden">
-                    <div className="p-4 bg-white border-bottom d-flex align-items-center gap-3">
-                        <div className="bg-danger text-white shadow-sm" style={stepIconStyle}>5</div>
-                        <h4 className="mb-0 fw-bold">Amenities & Questions</h4>
+                {/* STEP 5: AMENITIES & QUESTIONS */}
+                <div className="neo-card mb-5">
+                    <div className="neo-card-header">
+                        <div className="neo-icon-circle bg-danger text-white">
+                            <span className="fw-bold">5</span>
+                        </div>
+                        <div className="neo-header-info">
+                            <h4 className="mb-0 fw-bold">Amenities & Questions</h4>
+                            <p className="mb-0 text-muted fs-13">💆‍♂️ Luxury features and common inquiries</p>
+                        </div>
                     </div>
-                    <div className="card-body p-4">
-                        <div className="mb-5 pb-4 border-bottom">
+                    <div className="neo-card-body">
+                        {/* Amenities */}
+                        <div className="mb-5 pb-5 border-bottom border-light">
                             <div className="d-flex justify-content-between align-items-center mb-4">
-                                <h5 className="mb-0 fw-bold text-primary">Property Amenities</h5>
-                                <button type="button" onClick={addAmenity} className="btn btn-primary rounded-pill px-4">Add More +</button>
+                                <h5 className="mb-0 fw-bold neo-text-gradient small text-uppercase">Property Amenities</h5>
+                                <button type="button" onClick={addAmenity} className="premium-btn py-2 px-4 rounded-pill">Add Amenity +</button>
                             </div>
-                            <div className="row g-3">
+                            <div className="row g-4">
                                 {amenities.map((a, i) => (
                                     <div className="col-md-6 col-lg-4" key={i}>
-                                        <div className="input-group">
-                                            <input className="form-control border-2" placeholder="e.g. Gym, Pool" value={a} onChange={(e) => handleAmenityChange(i, e.target.value)} />
-                                            <button type="button" className="btn btn-outline-danger" onClick={() => removeAmenity(i)}><BsTrash /></button>
+                                        <div className="neo-input-group">
+                                            <input className="neo-input" placeholder="e.g. Gym, Pool" value={a} onChange={(e) => handleAmenityChange(i, e.target.value)} />
+                                            <button type="button" className="btn text-danger shadow-none" onClick={() => removeAmenity(i)}><BsTrash /></button>
                                         </div>
                                     </div>
                                 ))}
                             </div>
                         </div>
 
+                        {/* FAQs */}
                         <div>
                             <div className="d-flex justify-content-between align-items-center mb-4">
-                                <h5 className="mb-0 fw-bold text-primary">Frequently Asked Questions</h5>
-                                <button type="button" onClick={addFaq} className="btn btn-primary rounded-pill px-4">Add More +</button>
+                                <h5 className="mb-0 fw-bold neo-text-gradient small text-uppercase">Frequently Asked Questions</h5>
+                                <button type="button" onClick={addFaq} className="premium-btn py-2 px-4 rounded-pill">Add FAQ +</button>
                             </div>
                             {faqs.map((faq, i) => (
-                                <div key={i} className="p-4 border rounded-4 bg-light mb-4 position-relative">
-                                    <div className="d-flex justify-content-between align-items-center mb-3">
-                                        <h6 className="mb-0 fw-bold text-dark">Question {i + 1}</h6>
-                                        <button type="button" className="btn btn-sm text-danger fw-bold" onClick={() => removeFaq(i)}>Delete X</button>
+                                <div key={i} className="neo-inner-card p-4 mb-4 position-relative">
+                                    <div className="d-flex justify-content-between align-items-center mb-4">
+                                        <h6 className="mb-0 fw-bold text-dark opacity-75">Question #{i + 1}</h6>
+                                        <button type="button" className="btn btn-sm text-danger shadow-none fw-bold" onClick={() => removeFaq(i)}>Delete X</button>
                                     </div>
-                                    <div className="mb-3">
-                                        <label className="form-label small fw-bold">Type the question</label>
-                                        <input className="form-control border-2" placeholder="e.g. Is it freehold?" value={faq.question} onChange={(e) => handleFaqChange(i, "question", e.target.value)} />
-                                    </div>
-                                    <div>
-                                        <label className="form-label small fw-bold">Type the answer</label>
-                                        <textarea className="form-control border-2" rows="2" placeholder="Explain the answer clearly..." value={faq.answer} onChange={(e) => handleFaqChange(i, "answer", e.target.value)} />
+                                    <div className="row g-4">
+                                        <div className="col-12">
+                                            <label className="neo-label neo-label-sm">Question</label>
+                                            <input className="neo-input" placeholder="e.g. Is it freehold?" value={faq.question} onChange={(e) => handleFaqChange(i, "question", e.target.value)} />
+                                        </div>
+                                        <div className="col-12">
+                                            <label className="neo-label neo-label-sm">Answer</label>
+                                            <textarea className="neo-input" rows="2" placeholder="Explain the answer clearly..." value={faq.answer} onChange={(e) => handleFaqChange(i, "answer", e.target.value)} />
+                                        </div>
                                     </div>
                                 </div>
                             ))}
@@ -472,28 +542,29 @@ const Projects = () => {
                 </div>
 
                 {/* STEP 6: BROCHURE UPLOAD */}
-                <div className="card shadow-sm border-0 mb-5 rounded-4 overflow-hidden">
-                    <div className="p-4 bg-white border-bottom d-flex align-items-center gap-3">
-                        <div className="bg-success text-white shadow-sm" style={stepIconStyle}>6</div>
-                        <h4 className="mb-0 fw-bold">Project Brochure</h4>
+                <div className="neo-card mb-5">
+                    <div className="neo-card-header">
+                        <div className="neo-icon-circle bg-success text-white">
+                            <span className="fw-bold">6</span>
+                        </div>
+                        <div className="neo-header-info">
+                            <h4 className="mb-0 fw-bold">Project Brochure</h4>
+                            <p className="mb-0 text-muted fs-13">📄 Essential documents for download</p>
+                        </div>
                     </div>
-                    <div className="card-body p-4 text-center">
-                        <div className="p-5 border-2 border-dashed rounded-4 bg-light">
-                            <BsUpload className="text-success fs-1 mb-3" />
-                            <h5 className="fw-bold mb-2">Upload Project Brochure (PDF)</h5>
-                            <p className="text-muted small mb-4">Users can download this file from the project details page.</p>
-                            <input
-                                type="file"
-                                className="form-control border-2 mx-auto"
-                                style={{ maxWidth: '400px' }}
-                                onChange={(e) => setBrochure(e.target.files[0])}
-                                accept=".pdf,.doc,.docx"
-                            />
+                    <div className="neo-card-body p-5">
+                        <div className="neo-upload-card-lg p-5">
+                            <BsUpload className="neo-upload-icon-lg text-success mb-4" />
+                            <h5 className="fw-bold mb-3">Upload Project Brochure (PDF)</h5>
+                            <p className="text-muted small mb-4">Deliver clarity to your customers with a detailed company brochure.</p>
+                            <div className="neo-input-pill-wrapper max-w-400 mx-auto">
+                                <input type="file" className="neo-file-input" onChange={(e) => setBrochure(e.target.files[0])} accept=".pdf,.doc,.docx" />
+                            </div>
                             {brochure && (
-                                <div className="mt-4 p-3 bg-white rounded-3 shadow-sm d-inline-flex align-items-center gap-2 border">
+                                <div className="mt-4 neo-inner-card p-3 d-inline-flex align-items-center gap-3 shadow-sm border-success">
                                     <BsCheckCircleFill className="text-success" />
-                                    <span className="fw-bold">{brochure.name}</span>
-                                    <button type="button" className="btn btn-sm btn-link text-danger p-0" onClick={() => setBrochure(null)}>Remove</button>
+                                    <span className="fw-bold text-success small">{brochure.name}</span>
+                                    <button type="button" className="btn btn-sm text-danger p-0" onClick={() => setBrochure(null)}>Remove</button>
                                 </div>
                             )}
                         </div>
@@ -501,14 +572,210 @@ const Projects = () => {
                 </div>
 
                 {/* Submit Section */}
-                <div className="text-center mt-5">
-                    <button type="submit" className="btn btn-primary btn-lg w-100 py-4 rounded-pill shadow-lg border-0 fw-bold d-flex align-items-center justify-content-center gap-3 hover-scale-up" style={{ fontSize: '24px' }}>
-                        <BsCheckCircleFill /> PUBLISH THIS PROJECT
+                <div className="text-center mt-5 mb-5 pb-5">
+                    <button type="submit" className="premium-btn py-4 px-5 rounded-pill shadow-lg border-0 fw-bold hover-scale-up" style={{ fontSize: '22px' }}>
+                        🚀 PUBLISH THIS PROPERTY
                     </button>
-                    <p className="mt-4 text-muted">Click the button above to save and show this project on the website.</p>
+                    <p className="mt-4 text-muted small fw-bold text-uppercase tracking-widest opacity-50">Authorized by Admin Panel</p>
                 </div>
 
             </form>
+            <style>{`
+                .neo-container {
+                    background-color: #f8fafc;
+                    min-height: 100vh;
+                    font-family: 'Inter', sans-serif;
+                }
+                .neo-text-gradient {
+                    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                }
+                .neo-card {
+                    background: #ffffff;
+                    border-radius: 24px;
+                    border: 1px solid rgba(255,255,255,0.3);
+                    box-shadow: 20px 20px 60px #d1d9e6, -20px -20px 60px #ffffff;
+                    overflow: hidden;
+                    transition: transform 0.3s ease;
+                }
+                .neo-card-header {
+                    padding: 30px;
+                    background: rgba(255,255,255,0.5);
+                    border-bottom: 1px solid #f1f5f9;
+                    display: flex;
+                    align-items: center;
+                    gap: 20px;
+                }
+                .neo-icon-circle {
+                    width: 50px;
+                    height: 50px;
+                    border-radius: 15px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 20px;
+                    box-shadow: 4px 4px 10px rgba(0,0,0,0.1);
+                }
+                .neo-card-body {
+                    padding: 40px;
+                }
+                .neo-inner-card {
+                    background: #f1f5f9;
+                    border-radius: 20px;
+                    padding: 25px;
+                    box-shadow: inset 6px 6px 12px #d1d9e6, inset -6px -6px 12px #ffffff;
+                }
+                .neo-label {
+                    display: block;
+                    font-weight: 700;
+                    color: #475569;
+                    margin-bottom: 12px;
+                    font-size: 15px;
+                }
+                .neo-label-sm {
+                    font-size: 13px;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                }
+                .neo-emoji {
+                    margin-right: 8px;
+                    font-style: normal;
+                }
+                .neo-input-wrapper {
+                    position: relative;
+                }
+                .neo-input {
+                    width: 100%;
+                    padding: 15px 20px;
+                    border-radius: 15px;
+                    border: 1px solid #e2e8f0;
+                    background: #ffffff;
+                    color: #1e293b;
+                    font-weight: 500;
+                    transition: all 0.3s ease;
+                    box-shadow: 4px 4px 8px #d1d9e6, -4px -4px 8px #ffffff;
+                }
+                .neo-input:focus {
+                    outline: none;
+                    border-color: #4f46e5;
+                    box-shadow: inset 4px 4px 8px #d1d9e6, inset -4px -4px 8px #ffffff;
+                }
+                .neo-input-pill-wrapper {
+                    background: #ffffff;
+                    border-radius: 99px;
+                    padding: 10px;
+                    box-shadow: 6px 6px 12px #d1d9e6, -6px -6px 12px #ffffff;
+                }
+                .neo-input-pill {
+                    width: 100%;
+                    padding: 12px 25px;
+                    border: none;
+                    background: transparent;
+                    font-size: 18px;
+                    font-weight: 600;
+                    color: #475569;
+                }
+                .neo-input-pill:focus {
+                    outline: none;
+                }
+                .neo-input-hint {
+                    font-size: 12px;
+                    color: #6366f1;
+                    font-weight: 600;
+                    margin-top: 8px;
+                    padding-left: 5px;
+                }
+                .neo-input-group {
+                    display: flex;
+                    align-items: center;
+                    background: #ffffff;
+                    border-radius: 15px;
+                    padding-right: 15px;
+                    box-shadow: 4px 4px 8px #d1d9e6, -4px -4px 8px #ffffff;
+                }
+                .neo-input-group-text {
+                    padding: 15px 20px;
+                    background: #f1f5f9;
+                    border-radius: 15px 0 0 15px;
+                    font-weight: 800;
+                    color: #64748b;
+                    font-size: 13px;
+                }
+                .neo-input-group .neo-input {
+                    box-shadow: none;
+                    border: none;
+                }
+                .neo-upload-card {
+                    background: #ffffff;
+                    border: 2px dashed #e2e8f0;
+                    border-radius: 20px;
+                    padding: 30px;
+                    text-align: center;
+                    transition: all 0.3s ease;
+                    cursor: pointer;
+                }
+                .neo-upload-card:hover {
+                    border-color: #4f46e5;
+                    background: #f5f3ff;
+                }
+                .neo-upload-icon {
+                    font-size: 40px;
+                    margin-bottom: 15px;
+                    opacity: 0.7;
+                }
+                .neo-file-input {
+                    font-size: 13px;
+                    color: #64748b;
+                }
+                .neo-preview-wrapper {
+                    width: 100px;
+                    height: 100px;
+                    position: relative;
+                    border-radius: 15px;
+                    overflow: hidden;
+                }
+                .neo-preview-img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }
+                .neo-remove-btn {
+                    position: absolute;
+                    top: 5px;
+                    right: 5px;
+                    background: rgba(239, 68, 68, 0.9);
+                    color: white;
+                    border: none;
+                    width: 24px;
+                    height: 24px;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+                .neo-add-media-btn {
+                    width: 100px;
+                    height: 100px;
+                    border: 2px dashed #cbd5e1;
+                    border-radius: 15px;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    cursor: pointer;
+                    color: #94a3b8;
+                    transition: all 0.2s;
+                }
+                .neo-add-media-btn:hover {
+                    border-color: #4f46e5;
+                    color: #4f46e5;
+                    background: #f5f3ff;
+                }
+                .fs-13 { font-size: 13px !important; }
+                .fs-10 { font-size: 10px !important; }
+                .max-w-400 { max-width: 400px; }
+            `}</style>
         </div>
     );
 };

@@ -67,7 +67,7 @@ const CompanyDashboard = () => {
         } else if (view === "applications") {
             return <ViewApplication />;
         } else if (view === "projects") {
-            return <Projects />;
+            return <Projects user={user} />;
         } else if (view === "Profile") {
             return <CompanyProfile user={user} onUpdate={(updated) => setUser(prev => ({ ...prev, ...updated }))} />;
         } else {

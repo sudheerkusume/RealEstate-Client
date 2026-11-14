@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-    baseURL: "https://rej-server-2ayv.onrender.com",
+    baseURL: process.env.REACT_APP_API_URL || "http://localhost:5001",
 });
 
 // Auto-attach auth token to every request
