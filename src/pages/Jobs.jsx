@@ -11,6 +11,10 @@ const Jobs = () => {
     api
       .get("/jobCategories")
       .then((res) => {
+        if (!Array.isArray(res.data)) {
+          setCategories([]);
+          return;
+        }
         const grouped = res.data.reduce((acc, job) => {
           if (!acc[job.category]) {
             acc[job.category] = {
@@ -21,8 +25,12 @@ const Jobs = () => {
           }
           acc[job.category].count += 1;
           return acc;
-        }, {})
+        }, {});
         setCategories(Object.values(grouped));
+      })
+      .catch((err) => {
+        console.error("Error fetching job categories:", err);
+        setCategories([]);
       });
   }, []);
 

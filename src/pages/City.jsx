@@ -9,23 +9,31 @@ const City = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    api.get("/jobCategories").then((res) => {
-      const grouped = res.data.reduce((acc, job) => {
-        if (!acc[job.location]) {
-          acc[job.location] = {
-            name: job.location,
-            image: job.image2 || null, // ✅ prevent empty string
-            jobs: 0,
-          };
+    api.get("/jobCategories")
+      .then((res) => {
+        if (!Array.isArray(res.data)) {
+          setCities([]);
+          return;
         }
-        acc[job.location].jobs += 1;
-        return acc;
-      }, {});
+        const grouped = res.data.reduce((acc, job) => {
+          if (!acc[job.location]) {
+            acc[job.location] = {
+              name: job.location,
+              image: job.image2 || null, // ✅ prevent empty string
+              jobs: 0,
+            };
+          }
+          acc[job.location].jobs += 1;
+          return acc;
+        }, {});
 
-      setCities(Object.values(grouped));
-
-      setTimeout(() => Aos.refresh(), 300);
-    });
+        setCities(Object.values(grouped));
+        setTimeout(() => Aos.refresh(), 300);
+      })
+      .catch((err) => {
+        console.error("Error fetching cities:", err);
+        setCities([]);
+      });
   }, []);
 
   return (

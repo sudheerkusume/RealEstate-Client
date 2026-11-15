@@ -25,15 +25,20 @@ const Services = () => {
         api
             .get("/Services")
             .then((res) => {
-                setServices(res.data);
-                if (res.data.length > 0) {
+                if (Array.isArray(res.data) && res.data.length > 0) {
+                    setServices(res.data);
                     setActiveService(res.data[0]);
+                } else {
+                    setServices([]);
                 }
             })
-            .catch((err) => console.log(err));
+            .catch((err) => {
+                console.log(err);
+                setServices([]);
+            });
     }, []);
 
-    if (!activeService) return <div>Loading...</div>;
+    if (!activeService) return null;
 
     return (
         <section className="services-section">

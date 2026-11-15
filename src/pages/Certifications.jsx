@@ -45,8 +45,13 @@ const Certifications = () => {
     useEffect(() => {
         api
             .get("/Certifications")
-            .then((res) => setCerts(res.data))
-            .catch((err) => console.log(err));
+            .then((res) => {
+                setCerts(Array.isArray(res.data) ? res.data : []);
+            })
+            .catch((err) => {
+                console.log(err);
+                setCerts([]);
+            });
     }, []);
 
     return (

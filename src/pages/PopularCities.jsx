@@ -39,27 +39,35 @@ const PopularCities = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        api.get("/jobCategories").then((res) => {
-            const grouped = res.data.reduce((acc, job) => {
-                if (!acc[job.location]) {
-                    acc[job.location] = {
-                        name: job.location,
-                        jobs: 0,
-                    };
-                }
-                acc[job.location].jobs += 1;
-                return acc;
-            }, {});
+        api.get("/jobCategories")
+            .then((res) => {
+                const grouped = Array.isArray(res.data)
+                    ? res.data.reduce((acc, job) => {
+                        if (!acc[job.location]) {
+                            acc[job.location] = {
+                                name: job.location,
+                                jobs: 0,
+                            };
+                        }
+                        acc[job.location].jobs += 1;
+                        return acc;
+                    }, {})
+                    : {};
 
-            // Always show all featured cities, even if they have 0 jobs
-            const featured = FEATURED_ORDER.map((name) => ({
-                name,
-                jobs: grouped[name] ? grouped[name].jobs : 0,
-            }));
+                // Always show all featured cities, even if they have 0 jobs
+                const featured = FEATURED_ORDER.map((name) => ({
+                    name,
+                    jobs: grouped[name] ? grouped[name].jobs : 0,
+                }));
 
-            setCities(featured);
-            setTimeout(() => Aos.refresh(), 300);
-        });
+                setCities(featured);
+                setTimeout(() => Aos.refresh(), 300);
+            })
+            .catch((err) => {
+                console.error("Error fetching popular cities:", err);
+                const featured = FEATURED_ORDER.map((name) => ({ name, jobs: 0 }));
+                setCities(featured);
+            });
     }, []);
 
     return (
