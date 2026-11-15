@@ -44,10 +44,13 @@ const JobSingle = () => {
           api.get("/companies")
         ]);
 
-        setAllCompanies(companiesRes.data);
+        const companiesList = Array.isArray(companiesRes.data) ? companiesRes.data : [];
+        const jobsList = Array.isArray(jobsRes.data) ? jobsRes.data : [];
+
+        setAllCompanies(companiesList);
 
         // Support both _id and id for jobs
-        const foundJob = jobsRes.data.find(
+        const foundJob = jobsList.find(
           (j) => String(j._id || j.id) === String(id)
         );
 
@@ -55,13 +58,13 @@ const JobSingle = () => {
           const jobCid = String(foundJob.companyId || "");
 
           // 1. Try finding company by companyId (checking both _id and id)
-          let foundCompany = companiesRes.data.find(
+          let foundCompany = companiesList.find(
             (c) => String(c._id) === jobCid || String(c.id) === jobCid
           );
 
           // 2. Fallback: Search by Company Name if ID lookup failed
           if (!foundCompany && foundJob.company) {
-            foundCompany = companiesRes.data.find(
+            foundCompany = companiesList.find(
               (c) => c.name?.trim().toLowerCase() === foundJob.company.trim().toLowerCase()
             );
           }

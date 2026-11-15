@@ -40,10 +40,12 @@ const JobsPage = () => {
           api.get("/jobCategories"),
           api.get("/companies")
         ]);
-        setJobs(jobsRes.data || []);
-        setCompanies(companiesRes.data || []);
+        setJobs(Array.isArray(jobsRes.data) ? jobsRes.data : []);
+        setCompanies(Array.isArray(companiesRes.data) ? companiesRes.data : []);
       } catch (err) {
         console.error("Error fetching data:", err);
+        setJobs([]);
+        setCompanies([]);
       } finally {
         setLoading(false);
       }
@@ -52,6 +54,7 @@ const JobsPage = () => {
   }, []);
 
   const filteredJobs = useMemo(() => {
+    if (!Array.isArray(jobs)) return [];
     return jobs.filter(job => {
       const matchesCategory = !selectedCategory || job.category === selectedCategory;
       const title = job.title || "";

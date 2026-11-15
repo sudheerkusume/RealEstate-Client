@@ -10,9 +10,14 @@ const JobsByCategory = () => {
   useEffect(() => {
     api
       .get("/jobCategories")
-      .then(res =>
-        setJobs(res.data.filter(j => j.category === category))
-      );
+      .then(res => {
+        if (Array.isArray(res.data)) {
+          setJobs(res.data.filter(j => j.category === category));
+        } else {
+          setJobs([]);
+        }
+      })
+      .catch(() => setJobs([]));
   }, [category]);
 
   return (

@@ -8,14 +8,20 @@ const JobsByCity = () => {
   const [jobs, setJobs] = useState([]);
 
   useEffect(() => {
-    api.get("/jobCategories").then((res) => {
-      const filtered = res.data.filter(
-        (job) =>
-          job.location.toLowerCase() ===
-          decodeURIComponent(cityName).toLowerCase()
-      );
-      setJobs(filtered);
-    });
+    api.get("/jobCategories")
+      .then((res) => {
+        if (Array.isArray(res.data)) {
+          const filtered = res.data.filter(
+            (job) =>
+              (job.location || "").toLowerCase() ===
+              decodeURIComponent(cityName).toLowerCase()
+          );
+          setJobs(filtered);
+        } else {
+          setJobs([]);
+        }
+      })
+      .catch(() => setJobs([]));
   }, [cityName]);
 
   return (

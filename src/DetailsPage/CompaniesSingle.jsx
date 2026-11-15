@@ -44,12 +44,13 @@ const CompaniesSingle = () => {
                         .replace(/^-+/, '')             // Trim - from start of text
                         .replace(/-+$/, '');            // Trim - from end of text
 
-                const selectedCompany = companiesRes.data.find(
-                    c => c._id === id || slugify(c.name) === id
+                const companiesList = Array.isArray(companiesRes.data) ? companiesRes.data : [];
+                const selectedCompany = companiesList.find(
+                    c => c._id === id || slugify(c.name || '') === id
                 );
 
                 setCompany(selectedCompany || null);
-                setJobs(jobsRes.data || []);
+                setJobs(Array.isArray(jobsRes.data) ? jobsRes.data : []);
             } catch (error) {
                 console.error("Error loading company:", error);
                 setCompany(null);
