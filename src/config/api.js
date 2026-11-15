@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-    baseURL: process.env.REACT_APP_API_URL || "http://localhost:5001",
+    baseURL: process.env.REACT_APP_API_URL || "https://realestate-server-9xji.onrender.com",
 });
 
 // Auto-attach auth token to every request
